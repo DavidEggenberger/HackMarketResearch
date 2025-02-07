@@ -11,5 +11,7 @@ namespace Shared
         public const string LoginPath = "/UserIdentity/Login";
         public const string LogoutPath = "/UserIdentity/Logout";
         public const string UserClaimsPath = "/UserIdentity/BFFUser";
+
+        public const string MarketResearchEndpoint = "/marketresearches";
     }
 }

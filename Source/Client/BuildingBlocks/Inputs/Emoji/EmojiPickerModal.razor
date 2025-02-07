@@ -1,0 +1,48 @@
+﻿@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+
+<div class="p-1 ring-primary-500 flex w-[360px] flex-col rounded-lg ring-1">
+    <div id="emojiPickerContainer"></div>
+    <div class="pb-2 pr-1 pt-3 flex flex-row justify-end">
+        <button @onclick="CloseModalAsync" class="p-1 ring-gray-300 rounded shadow-sm ring-1 ring-inset hover:bg-gray-50">Cancel</button>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public EventCallback<string> ModalExitedCallback { get; set; }
+
+    private DotNetObjectReference<EmojiPickerModal>? dotNetRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("emojiInit", "emojiPickerContainer", dotNetRef);
+        }
+    }
+
+    public async Task CloseModalAsync()
+    {
+        if (ModalExitedCallback.HasDelegate)
+        {
+            await ModalExitedCallback.InvokeAsync(string.Empty);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnEmojiSelected(string emoji)
+    {
+        if (ModalExitedCallback.HasDelegate)
+        {
+            await ModalExitedCallback.InvokeAsync(emoji);
+        }
+    }
+
+    public void Dispose()
+    {
+        dotNetRef?.Dispose();
+    }
+}

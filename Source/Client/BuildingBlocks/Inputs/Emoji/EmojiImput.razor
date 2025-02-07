@@ -1,0 +1,46 @@
+﻿@using Blazored.Modal.Services
+@using Client.BuildingBlocks.Modals
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+
+<div>
+    <label for="EmojiInput" class="text-gray-900 text-md block font-medium">Optional Emoji</label>
+
+    @if (string.IsNullOrEmpty(selectedEmojii))
+    {
+        <div @onclick="async () => await ShowEmojiModalAsync()" class="text-gray-900 text-md block w-full cursor-pointer rounded border border-gray-300 bg-gray-50 p-1 font-medium outline-none focus:ring-primary-500 focus:border-primary-500">
+            <span>Pick</span>
+        </div>
+    }
+    else
+    {
+        <div class="text-gray-900 text-md border-gray-300 bg-gray-50 p-0.5 block rounded border font-medium outline-none focus:ring-primary-500 focus:border-primary-500">
+            <div class="flex flex-row">
+                <div class="text-3xl">@selectedEmojii</div>
+                
+                <div></div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@code {
+
+    [Inject]
+    public IModalService ModalService { get; set; }
+
+    private string selectedEmojii;
+    private IModalReference modalReference;
+
+    public async Task ShowEmojiModalAsync()
+    {
+        var parameters = new ModalParameters
+        {
+            { nameof(EmojiPickerModal.ModalExitedCallback), new EventCallback<string>(this, (string chosenEmoji) => { selectedEmojii = chosenEmoji; modalReference.Close(); }) },
+        };
+
+        modalReference = ModalService.Show<EmojiPickerModal>(string.Empty, parameters, DefaultModalOptions.DefaultModal);
+
+    }
+}

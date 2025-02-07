@@ -1,0 +1,19 @@
+﻿<CreateModal CreationTitle="Marktforschung Starten"
+             CreationDescription="adf lj köl asdfl asdflas dfjlsaödfkaslödfasdf asdfasdf sadf"
+             TModel="MarketResearchDTO"
+             IconPath="/icons/chart.png"
+             ModalExitedCallback="async() => await CloseModalAsync()"
+             ActionButtonClickedCallback="async () => await CreateMarketResearchAsync()"
+             Model="marketResearch">
+
+    <Template>
+        <NameWithEmojiInput 
+            Tooltip="afasdf asfdasd adsfasdf adf adfs a adsf adsfa sdf adfs" 
+            Label="UserName" 
+            @bind-Value="marketResearch.Name" 
+            ValidationFor="@(() => marketResearch.Name)"
+            EmojiSelectedCallback="(selectedEmoji) => { marketResearch.Emoji = selectedEmoji; }"/>
+
+    </Template>
+
+</CreateModal>
