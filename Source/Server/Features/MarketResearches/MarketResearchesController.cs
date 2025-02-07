@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Infrastructure.EFCore;
+using Shared.ChatMessages;
 using Shared.MarketResearch;
 using Shared.YouTube;
 using System;
@@ -91,6 +92,26 @@ namespace Server.Features.MarketResearches
             {
                 Url = youTubeVideoAnalysisDTO.Url,
             });
+
+            await applicationDbContext.SaveChangesAsync();
+        }
+
+        [HttpPost("{marketResearchId}/chat")]
+        public async Task CreateChatMessageAsync([FromRoute] Guid marketResearchId, [FromBody] ChatMessageDTO chatMessageDTO)
+        {
+            var marketResearch = await applicationDbContext.MarketResearches.FirstAsync(mr => mr.Id == marketResearchId);
+
+            marketResearch.ChatMessages.Add(ChatMessage.FromDTO(chatMessageDTO));
+
+            await applicationDbContext.SaveChangesAsync();
+        }
+
+        [HttpPut("{marketResearchId}/chat")]
+        public async Task CreateChatMessageAsync([FromRoute] Guid marketResearchId, [FromBody] ChatMessageDTO chatMessageDTO)
+        {
+            var marketResearch = await applicationDbContext.MarketResearches.FirstAsync(mr => mr.Id == marketResearchId);
+
+            marketResearch.ChatMessages.Add(ChatMessage.FromDTO(chatMessageDTO));
 
             await applicationDbContext.SaveChangesAsync();
         }

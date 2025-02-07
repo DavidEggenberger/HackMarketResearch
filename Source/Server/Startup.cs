@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Server.Features.YouTube;
 using Server.Infrastructure.EFCore;
+using Server.Infrastructure.Hubs;
 
 namespace Server
 {
@@ -68,6 +69,7 @@ namespace Server
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<NotificationHub>("/notificationHub");
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
                 endpoints.MapFallbackToPage("/_Host");

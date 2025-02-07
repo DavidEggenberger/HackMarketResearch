@@ -1,8 +1,21 @@
-﻿<div class="w-full h-full grid justify-center">
+﻿<div class="w-full h-full grid justify-center overflow-y-auto">
     <div class="w-[400px]">
         @foreach (var chatMessage in MarketResearchDTO.ChatMessages)
         {
             <ChatMessageComponent ChatMessage="chatMessage"/>
         }
+        <div class="w-full flex flex-col justify-start mt-4">
+            <div @onkeydown="async(c) => await HandleKeyDown(c)">
+                <textarea @bind="currentMessage" @bind:event="oninput" style="min-height: 50px; overflow-y: hidden; resize: none;"
+                          class="w-[340px] whitespace-normal block text-gray-900 w-full hover:bg-gray-100 rounded border border-gray-300 bg-gray-50 p-1.5 text-md outline-none focus:ring-primary-500 focus:border-primary-500"
+                          type="text" autocomplete="off"
+                          autocorrect="off"
+                          autocapitalize="off"
+                          spellcheck="false" />
+                <div class="text-[12px] flex justify-end w-[340px]">
+                    Zum senden enter drücken
+                </div>
+            </div>
+        </div>
     </div>
 </div>
