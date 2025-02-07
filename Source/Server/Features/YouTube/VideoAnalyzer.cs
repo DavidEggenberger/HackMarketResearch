@@ -20,7 +20,7 @@ namespace Server.Features.YouTube
                 throw new Exception();
             }
 
-            var comments = videoResult.Data.Comments.Select(c => new VideoComment { Text = c.Text }).ToList();
+            var comments = videoResult.Data.Comments.Select(c => new VideoComment { Text = c.Text, LikeCount = c.LikeCount }).ToList();
             return comments;
 
         }
