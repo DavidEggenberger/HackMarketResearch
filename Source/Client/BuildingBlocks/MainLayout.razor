@@ -1,0 +1,38 @@
+﻿@inherits LayoutComponentBase
+
+<div class="h-screen w-screen">
+    <nav class="pb-0 ml-auto mr-auto flex h-[65px] w-full max-w-[1400px] flex-row content-start items-end justify-between p-[20px]">
+        <div>
+            <a id="start" href="/">
+                <h1 class="text-orange text-4xl">🚀MarketResearch<span class="text-[46px]"></span></h1>
+            </a>
+        </div>
+        <div class="gap-x-4 flex flex-row">
+            <NavLink href="/about">
+                <span class="p-1 cursor-pointer text-xl hover:text-orange">About</span>
+            </NavLink>
+            <a target="_blank" href="/swagger/index.html">
+                <span class="p-1 cursor-pointer text-xl hover:text-orange">Our API</span>
+            </a>
+            <AuthorizeView>
+                <NotAuthorized>
+                    <button target="_blank" href="/swagger/index.html">
+                        <span class="border-1 border-orange text-orange bg-white p-1 cursor-pointer rounded border text-xl transition hover:text-white hover:bg-orange">Sign in</span>
+                    </button>
+                </NotAuthorized>
+                <Authorized>
+                    <a href="/about">
+                        <span class="p-1 cursor-pointer text-xl">Welcome @context?.User?.Identity?.Name!</span>
+                    </a>
+                    <button target="_blank" href="/swagger/index.html">
+                        <span class="border-1 border-orange text-orange bg-white p-1 cursor-pointer rounded border text-xl hover:bg-orange hover:text-white">Sign out</span>
+                    </button>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+    </nav>
+
+    <main class="h-[calc(100%-65px)] ml-auto mr-auto max-h-[900px] w-full max-w-[1400px] overflow-y-auto p-[20px]">
+        @Body
+    </main>
+</div>

@@ -1,5 +1,8 @@
+using Client.BuildingBlocks.Auth;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Client
 {
@@ -10,6 +13,11 @@ namespace Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddTransient<AuthorizedHandler>();
+            builder.Services.TryAddSingleton<HostAuthenticationStateProvider>();
+            builder.Services.TryAddSingleton<AuthenticationStateProvider, HostAuthenticationStateProvider>();
+
+            builder.Services.AddAuthorizationCore();
 
             await builder.Build().RunAsync();
         }

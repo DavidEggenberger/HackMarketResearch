@@ -1,5 +1,17 @@
 ﻿@page "/"
 
-<div class="h-full border bg-secondary-500">
-    <h3 class="h-[450px] bg-primary-500 p-[99px] font-semibold">Hello</h3>
-</div>
+<AuthorizeView>
+    <NotAuthorized>
+        <div class="grid h-full place-content-center">
+            <div class="mt-[-110px] max-w-[950px] text-center">
+                <h2 class="text-orange text-5xl">Build something people want!</h2>
+                <h3 class="mt-5 text-2xl">Unser Ziel ist es, dir auf dem Weg zum Product Market Fit zu helfen. Wir hoffen, dass du eine Marktlücke findest und damit einen positiven Impact für die Gesellschaft leistest.</h3>
+                <div>
+                    <button class="border-1 text-orange border-orange mt-4 bg-white p-1 w-[195px] cursor-pointer justify-self-end rounded border text-xl transition hover:bg-orange hover:text-white">
+                        <span>Start your research</span>
+                    </button>
+                </div>             
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
