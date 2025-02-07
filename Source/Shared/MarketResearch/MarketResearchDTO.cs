@@ -1,4 +1,5 @@
 ﻿using Shared.ChatMessages;
+using Shared.YouTube;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace Shared.MarketResearch
         public string Emoji { get; set; }
         public string Name { get; set; }
         public MarketTypeDTO MarketType { get; set; }
-        public List<ChatMessageDTO> ChatMessages { get; set; }
+        public List<ChatMessageDTO> ChatMessages { get; set; } = new List<ChatMessageDTO>();
+        public List<YouTubeVideoAnalysisDTO> Videos { get; set; } = new List<YouTubeVideoAnalysisDTO>();
     }
 }

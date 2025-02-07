@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Server.Infrastructure.EFCore;
+using Server.Infrastructure.Hubs;
+using Shared;
 using Shared.ChatMessages;
 using Shared.MarketResearch;
 using Shared.YouTube;
@@ -16,11 +19,13 @@ namespace Server.Features.MarketResearches
     [ApiController]
     public class MarketResearchesController : ControllerBase
     {
+        private readonly IHubContext<NotificationHub> hubContext;
         private readonly ApplicationDbContext applicationDbContext;
 
-        public MarketResearchesController(ApplicationDbContext applicationDbContext)
+        public MarketResearchesController(ApplicationDbContext applicationDbContext, IHubContext<NotificationHub> hubContext)
         {
             this.applicationDbContext = applicationDbContext;
+            this.hubContext = hubContext;
         }
 
         [HttpGet]
@@ -33,6 +38,7 @@ namespace Server.Features.MarketResearches
         public async Task<ActionResult> GetMarketResearch(Guid id)
         {
             var marketResearch = await applicationDbContext.MarketResearches
+                .Include(mr => mr.VideoAnalysises)
                 .Include(mr => mr.ChatMessages)
                 .FirstAsync(mr => mr.Id == id);
 
@@ -103,17 +109,19 @@ namespace Server.Features.MarketResearches
 
             marketResearch.ChatMessages.Add(ChatMessage.FromDTO(chatMessageDTO));
 
+            await hubContext.Clients.All.SendAsync(NotificationConstants.UpdateChat);
+
             await applicationDbContext.SaveChangesAsync();
         }
 
-        [HttpPut("{marketResearchId}/chat")]
-        public async Task CreateChatMessageAsync([FromRoute] Guid marketResearchId, [FromBody] ChatMessageDTO chatMessageDTO)
+        [HttpGet("{marketResearchId}/chat")]
+        public async Task<List<ChatMessageDTO>> LoadAllChatMessageOfMarketResearchAsync([FromRoute] Guid marketResearchId)
         {
-            var marketResearch = await applicationDbContext.MarketResearches.FirstAsync(mr => mr.Id == marketResearchId);
+            var marketResearch = await applicationDbContext.MarketResearches
+                .Include(mr => mr.ChatMessages)
+                .FirstAsync(mr => mr.Id == marketResearchId);
 
-            marketResearch.ChatMessages.Add(ChatMessage.FromDTO(chatMessageDTO));
-
-            await applicationDbContext.SaveChangesAsync();
+            return marketResearch.ToDTO().ChatMessages;
         }
 
         [HttpDelete("{id}")]

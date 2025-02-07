@@ -38,7 +38,8 @@ namespace Server.Features.MarketResearches
                 Id = Id,
                 Emoji = Emoji,
                 Name = Name,
-                ChatMessages = ChatMessages.Select(cm => cm.ToDTO()).ToList()
+                ChatMessages = ChatMessages.Select(cm => cm.ToDTO()).ToList(),
+                Videos = VideoAnalysises.Select(v =>  v.ToDTO()).ToList(),
             };
         }
     }

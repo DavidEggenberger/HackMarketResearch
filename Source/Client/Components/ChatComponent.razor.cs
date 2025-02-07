@@ -19,11 +19,11 @@ namespace Client.Components
         [Parameter]
         public MarketResearchDTO MarketResearchDTO { get; set; }
 
-        private string currentMessage;
+        private string currentMessage = string.Empty;
 
         protected override async Task OnInitializedAsync()
         {
-            HubConnection.On(NotificationConstants.UpdateChat, )
+            HubConnection.On(NotificationConstants.UpdateChat, async () => await GetMessagesForChat());
         }
 
         private async Task SendChatMessageAsync(string message)
@@ -39,7 +39,7 @@ namespace Client.Components
 
         private async Task HandleKeyDown(KeyboardEventArgs args)
         {
-            if (args.Key == "Enter" && currentMessage.Length > 1)
+            if (args.Key == "Enter" && currentMessage?.Length > 1)
             {
                 await SendChatMessageAsync(currentMessage);
             }
@@ -47,8 +47,9 @@ namespace Client.Components
 
         private async Task GetMessagesForChat()
         {
-            var messages = await HttpClientService.GetFromAPIAsync<IEnumerable<ChatMessageDTO>>($"/chats/{chatDTO.Id}/messages");
-            chatDTO.Messages = messages.ToList();
+            var messages = await HttpClientService.GetFromAPIAsync<List<ChatMessageDTO>>(EndpointConstants.MarketResearchEndpoint + $"/{MarketResearchDTO.Id}/chat");
+            MarketResearchDTO.ChatMessages = messages;
+            StateHasChanged();
         }
     }
 }
