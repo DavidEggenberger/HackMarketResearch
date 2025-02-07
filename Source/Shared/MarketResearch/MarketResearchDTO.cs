@@ -8,7 +8,9 @@ namespace Shared.MarketResearch
 {
     public class MarketResearchDTO
     {
+        public Guid Id { get; set; }
         public string Emoji { get; set; }
         public string Name { get; set; }
+        public MarketTypeDTO MarketType { get; set; }
     }
 }

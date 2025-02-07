@@ -36,6 +36,7 @@ namespace Client
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<AuthorizedHttpClientService>();
+            builder.Services.AddScoped<HttpClientService>();
 
             await builder.Build().RunAsync();
         }

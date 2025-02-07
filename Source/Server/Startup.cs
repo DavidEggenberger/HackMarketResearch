@@ -41,7 +41,7 @@ namespace Server
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration["SQLConnection"]);
+                options.UseSqlServer(Configuration["EFCoreConfiguration:SQLServerConnectionStringProd"]);
             });
 
             services.AddScoped<VideoAnalyzer>();

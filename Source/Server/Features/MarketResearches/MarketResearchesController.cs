@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Server.Infrastructure.EFCore;
+using Shared.MarketResearch;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Server.Features.MarketResearches
 {
@@ -22,14 +26,25 @@ namespace Server.Features.MarketResearches
         }
 
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult> GetMarketResearch(Guid id)
         {
-            return "value";
+            var marketResearch = await applicationDbContext.MarketResearches.FirstAsync(mr => mr.Id == id);
+
+            return Ok(marketResearch.ToDTO());
         }
 
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> CreateMarketResearch([FromBody] MarketResearchDTO marketResearchDTO)
         {
+            await Task.Delay(1000);
+
+            var marketResearch = MarketResearch.FromDTO(marketResearchDTO);
+            marketResearch.Id = Guid.NewGuid();
+
+            applicationDbContext.MarketResearches.Add(marketResearch);
+            await applicationDbContext.SaveChangesAsync();
+
+            return Ok(marketResearch.ToDTO());
         }
 
         [HttpPut("{id}")]

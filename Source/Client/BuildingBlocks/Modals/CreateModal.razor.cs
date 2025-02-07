@@ -29,7 +29,7 @@ namespace Client.BuildingBlocks.Modals
         private EditContext context;
         private bool ActionButtonEnabled;
         private string ActionButtonStyling => ActionButtonEnabled ?
-            "cursor-pointer border-primary-500 bg-primary-500 border fill-white p-1 text-white duration-200 hover:border-1 hover:border-primary-500 hover:fill-primary-500 hover:text-primary-500 hover:bg-white-700" :
+            "cursor-pointer border-orange bg-orange border fill-white p-1 text-white duration-200 rounded" :
             "ring-1 cursor-default rounded p-1 shadow-sm ring-inset ring-gray-300 hover:bg-gray-50";
         private bool requestOngoing;
 

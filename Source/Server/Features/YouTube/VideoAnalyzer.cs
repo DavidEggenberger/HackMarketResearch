@@ -1,14 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using System;
-using YoutubeDLSharp;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
 using System.Text.Json;
 using Server.Features.YouTube.APIObjects;
 

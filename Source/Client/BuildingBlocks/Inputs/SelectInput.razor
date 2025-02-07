@@ -1,0 +1,27 @@
+﻿@typeparam T
+@inherits InputBase<T>
+
+<div>
+    <div class="mb-1.5 gap-x-1 flex flex-row items-center">
+        <label for="@Label" class="text-gray-900 text-md block font-medium">@Label</label>
+        @if (string.IsNullOrEmpty(Tooltip) is false)
+        {
+            <div class='has-tooltip'>
+                <span class='tooltip -mt-8 max-w-48 bg-gray-200 p-1 rounded'>@Tooltip</span>
+
+                <img src="/icons/app/info.png" class="mb-0.5 h-4 cursor-pointer" />
+            </div>
+        }
+    </div>
+
+    <select 
+        @bind="CurrentValue"
+        @oninput="EventCallback.Factory.CreateBinder<T>(this, __value => CurrentValue = __value, CurrentValue)"
+        class="text-gray-900 block w-full rounded border outline-none border-gray-300 bg-gray-50 p-1.5 text-sm focus:ring-orange focus:border-orange">
+        
+        @foreach (var option in Options)
+        {
+            <option value="@option.Item1">@option.Item2</option>
+        }
+    </select>
+</div>

@@ -1,19 +1,39 @@
 ﻿<CreateModal CreationTitle="Marktforschung Starten"
-             CreationDescription="adf lj köl asdfl asdflas dfjlsaödfkaslödfasdf asdfasdf sadf"
-             TModel="MarketResearchDTO"
-             IconPath="/icons/chart.png"
-             ModalExitedCallback="async() => await CloseModalAsync()"
-             ActionButtonClickedCallback="async () => await CreateMarketResearchAsync()"
-             Model="marketResearch">
+CreationDescription="Starte eine Marktforschung. Wir probieren dich dabei bestmöglich zu unterstützen."
+TModel="MarketResearchDTO"
+IconPath="/icons/chart.png"
+ModalExitedCallback="async() => await CloseModalAsync()"
+ActionButtonClickedCallback="async () => await CreateMarketResearchAsync()"
+Model="marketResearch">
 
     <Template>
         <NameWithEmojiInput 
-            Tooltip="afasdf asfdasd adsfasdf adf adfs a adsf adsfa sdf adfs" 
-            Label="UserName" 
-            @bind-Value="marketResearch.Name" 
-            ValidationFor="@(() => marketResearch.Name)"
-            EmojiSelectedCallback="(selectedEmoji) => { marketResearch.Emoji = selectedEmoji; }"/>
+        Tooltip="" 
+        Label="UserName" 
+        @bind-Value="marketResearch.Name" 
+        ValidationFor="@(() => marketResearch.Name)"
+        EmojiSelectedCallback="(selectedEmoji) => { marketResearch.Emoji = selectedEmoji; }"/>
 
+        <SelectInput 
+        Label="Themengebiet"
+        Options="marketTypes"
+        @bind-Value="marketResearch.MarketType"
+        ValidationFor="@(() => marketResearch.MarketType)" />
     </Template>
 
 </CreateModal>
+
+@code{
+    private List<(MarketTypeDTO, string)> marketTypes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        marketTypes = new List<(MarketTypeDTO, string)>
+        {
+            (MarketTypeDTO.HealthCare, "⚕️ Healthcare"),
+            (MarketTypeDTO.Education, "📖 Education"),
+            (MarketTypeDTO.Robotics, "🦾 Robotics"),
+            (MarketTypeDTO.Finance, "📈 Finance")
+        };
+    }
+}

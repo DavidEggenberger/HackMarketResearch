@@ -11,15 +11,20 @@ namespace Client.BuildingBlocks.Modals
         public EventCallback ModalExitedCallback { get; set; }
 
         [Inject]
-        public AuthorizedHttpClientService HttpClientService { get; set; }
+        public HttpClientService HttpClientService { get; set; }
+
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
         private MarketResearchDTO marketResearch = new MarketResearchDTO();
 
         private async Task CreateMarketResearchAsync()
         {
-            await HttpClientService.PostToAPIAsync(EndpointConstants.MarketResearchEndpoint, marketResearch);
+            var createdMarketResearch = await HttpClientService.PostToAPIAsync<MarketResearchDTO>(EndpointConstants.MarketResearchEndpoint, marketResearch);
 
             await CloseModalAsync();
+
+            NavigationManager.NavigateTo($"/marketResearch/{createdMarketResearch.Id}");
         }
 
         public async Task CloseModalAsync()
