@@ -16,7 +16,7 @@ namespace Server.Features.MarketResearches
         }
 
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<string> GetMarketResearches()
         {
             return new string[] { "value1", "value2" };
         }
