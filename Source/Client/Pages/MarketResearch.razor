@@ -1,15 +1,15 @@
 ﻿@page "/MarketResearch/{Id}"
 
-<div class="h-full w-full grid grid-cols-[230px_1fr] pt-3">
-    <div class="w-full h-full border-r border-orange">
-        <h3 class="font-semibold text-xl">History</h3>
+<div class="grid-cols-[230px_1fr] pt-3 grid h-full w-full">
+    <div class="border-orange h-full w-full border-r">
+        <h3 class="text-xl font-semibold">History</h3>
 
         <AuthorizeView>
             <NotAuthorized>
                
                 <div class="mt-6 mr-2">
                     <h3 class="mb-1 text-sm">Erstelle einen Account um deine Marktanalysen zu speichern.</h3>
-                    <button class="mt-1 border-1 border-orange text-orange bg-white p-1 cursor-pointer rounded border text-md transition hover:text-white hover:bg-orange">
+                    <button class="mt-1 border-1 border-orange text-orange bg-white p-1 text-md cursor-pointer rounded border transition hover:text-white hover:bg-orange">
                         <span class="whitespace-nowrap">Account erstellen</span>
                     </button>
                 </div>
@@ -17,31 +17,38 @@
         </AuthorizeView>
 
     </div>
-    <div class="w-full h-full pl-4 pt-1 grid grid-rows-[80px_1fr]">
+    <div class="pl-4 pt-1 grid-rows-[80px_1fr] grid h-full w-full overflow-y-auto">
         <div class="h-[80px] w-full">
-            <h5 class="text-md">
+            <h5 class="text-lg">
                 @marketResearch?.MarketType.GetString()
             </h5>
-            <h2 class="text-2xl mt-2 font-semibold text-orange">
+            <h2 class="mt-2 ml-2 text-orange text-3xl font-semibold">
                 @marketResearch.Emoji @marketResearch?.Name
             </h2>
         </div>
-        <div class="h-full w-full grid grid-cols-[1fr_260px] overflow-y-auto">
-            <div class="w-full h-full">
+        <div class="grid-cols-[1fr_300px] pt-4 grid h-full w-full overflow-y-auto">
+            <div class="pr-2 h-full w-full overflow-y-auto">
                 <ChatComponent MarketResearchDTO="marketResearch"/>
             </div>
-            <div class="w-full h-full">
+            <div class="h-full w-full">
                 <div>
-                    <h3 class="text-lg font-semibold mb-2">Analysierter Content</h3>
+                    <h3 class="mb-2 text-lg font-semibold">Analysierter Content</h3>
                 </div>
-                <div class="h-48">
-                    <div class="flex items-center">
-                        <h3 class="mb-1 text-md font-semibold">YouTube Videos</h3>
-                        <div class="h-6 w-6 ml-2 mb-1 cursor-pointer" @onclick="async() => await OpenCreateVideoAnalysisModalAsync()">
-                            <img src="/icons/add.png"/>
+                <div class="h-1/2">
+                    <div class="flex flex-row items-center justify-between">
+                        <div class="flex flex-row items-center">
+                            <h3 class="mb-1 text-md font-semibold">YouTube Videos</h3>
+                            <div class="h-6 w-6 ml-2 mb-1 cursor-pointer" @onclick="async() => await OpenCreateVideoAnalysisModalAsync()">
+                                <img src="/icons/add.png" />
+                            </div>
                         </div>
+                        <select class="mr-2 mb-1 text-gray-900 border-gray-300 bg-gray-50 p-0.5 block rounded border text-xs outline-none focus:ring-orange focus:border-orange">
+                            <option>Neueste</option>
+                            <option>Marktpotenzial</option>
+                            <option>Anz. Kommentare</option>
+                        </select>
                     </div>
-                    <div>
+                    <div class="pr-2 h-full overflow-y-auto">
                         @if (marketResearch?.Videos.Any() == true)
                         {
                             foreach (var video in marketResearch.Videos)

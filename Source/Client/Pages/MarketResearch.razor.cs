@@ -5,6 +5,7 @@ using Client.BuildingBlocks.Modals;
 using Microsoft.AspNetCore.Components;
 using Shared;
 using Shared.MarketResearch;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Client.Pages
 {
@@ -19,12 +20,21 @@ namespace Client.Pages
         [Inject]
         public IModalService modalService { get; set; }
 
+        [CascadingParameter]
+        public HubConnection HubConnection { get; set; }
+
         private MarketResearchDTO marketResearch;
         private IModalReference modalReference;
 
         protected override async Task OnInitializedAsync()
         {
             marketResearch = await HttpClientService.GetFromAPIAsync<MarketResearchDTO>(EndpointConstants.MarketResearchEndpoint + $"/{Id}");
+
+            HubConnection.On(NotificationConstants.UpdateMarketResearch, async () =>
+            {
+                marketResearch = await HttpClientService.GetFromAPIAsync<MarketResearchDTO>(EndpointConstants.MarketResearchEndpoint + $"/{Id}");
+                StateHasChanged();     
+            });
         }
 
         private async Task OpenCreateVideoAnalysisModalAsync()

@@ -8,6 +8,9 @@ namespace Shared.YouTube
 {
     public class YouTubeVideoAnalysisDTO
     {
+        public string VideoName { get; set; }
         public string Url { get; set; }
+        public string Thumbnail { get; set; }
+        public List<VideoCommentDTO> VideoComments { get; set; } = new List<VideoCommentDTO>();
     }
 }

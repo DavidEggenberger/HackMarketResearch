@@ -19,12 +19,12 @@ namespace Server.Features.YouTube
             this.videoAnalyzer = videoAnalyzer;
         }
 
-        [HttpGet("comments/{youtubeVideoPath}")]
-        public async Task<ActionResult<List<VideoComment>>> GetComments(string youtubeVideoPath)
-        {
-            var urlDecoded = HttpUtility.UrlDecode(youtubeVideoPath);
-            var comments = await videoAnalyzer.AnalyzeYouTubeVideo(urlDecoded);
-            return Ok(comments);
-        }
+        //[HttpGet("comments/{youtubeVideoPath}")]
+        //public async Task<ActionResult<List<VideoComment>>> GetComments(string youtubeVideoPath)
+        //{
+        //    var urlDecoded = HttpUtility.UrlDecode(youtubeVideoPath);
+        //    var comments = await videoAnalyzer.AnalyzeYouTubeVideo(urlDecoded);
+        //    return Ok(comments);
+        //}
     }
 }

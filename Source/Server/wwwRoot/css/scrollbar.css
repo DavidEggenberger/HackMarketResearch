@@ -1,0 +1,22 @@
+﻿body {
+    scrollbar-gutter: stable both-edges;
+}
+
+::-webkit-scrollbar {
+    width: 20px !important;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 97, 0, 1);
+    background-clip: padding-box;
+    border-left: 14px solid transparent;
+    width: 6px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        cursor: pointer;
+    }

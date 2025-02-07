@@ -33,7 +33,7 @@
 
     <div class="gap-x-3 border-gray-300 p-4 flex flex-row items-center justify-end border-t">
         <button @onclick="CloseModalAsync" class="p-1 ring-gray-300 rounded shadow-sm ring-1 ring-inset hover:bg-gray-50">Cancel</button>
-        <button @onclick="async () => await CreateButtonClickedAsync()" class="border-1 flex @(requestOngoing ? "cursor-default" : "cursor-pointer hover:border-1 hover:border-primary-500 hover:fill-primary-500 hover:text-primary-500 hover:bg-white-700") flex-row @ActionButtonStyling">
+        <button @onclick="async () => await CreateButtonClickedAsync()" class="border-1 flex flex-row items-center @(requestOngoing ? "cursor-default" : "cursor-pointer hover:border-1 hover:border-primary-500 hover:fill-primary-500 hover:text-primary-500 hover:bg-white-700") flex-row @ActionButtonStyling">
             @if (requestOngoing)
             {
                 <svg aria-hidden="true" role="status" class="me-2 ml-1 h-4 w-4 text-gray-200 inline animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

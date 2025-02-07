@@ -1,7 +1,18 @@
-﻿<div>
-    @VideoDTO.Url
-</div>
+﻿<div class="p-1 bg-white border-grey-300 mt-1 rounded border">
+    <div>
+        <h3 class="text-xs font-semibold">@VideoDTO.VideoName</h3>
+    </div>
+    <div class="mt-1 flex flex-row justify-between">
+        <div class="gap-x-2 flex flex-row">
+            <a class="text-orange cursor-pointer text-xs" href="@VideoDTO.Url" target="_blank">Analyse</a>
+            <a class="text-orange cursor-pointer text-xs" href="@VideoDTO.Url" target="_blank">Video</a>
+        </div>
 
+        <div class="text-xs">
+            Comments: <span class="font-semibold">@VideoDTO.VideoComments.Count</span>
+        </div>
+    </div>
+</div>
 
 @code{
     [Parameter]

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Server.Features.YouTube;
 using Server.Infrastructure.EFCore;
 using Server.Infrastructure.Hubs;
 using Shared;
@@ -21,11 +22,13 @@ namespace Server.Features.MarketResearches
     {
         private readonly IHubContext<NotificationHub> hubContext;
         private readonly ApplicationDbContext applicationDbContext;
+        private readonly VideoAnalyzer videoAnalyzer;
 
-        public MarketResearchesController(ApplicationDbContext applicationDbContext, IHubContext<NotificationHub> hubContext)
+        public MarketResearchesController(ApplicationDbContext applicationDbContext, VideoAnalyzer videoAnalyzer, IHubContext<NotificationHub> hubContext)
         {
             this.applicationDbContext = applicationDbContext;
             this.hubContext = hubContext;
+            this.videoAnalyzer = videoAnalyzer;
         }
 
         [HttpGet]
@@ -39,6 +42,7 @@ namespace Server.Features.MarketResearches
         {
             var marketResearch = await applicationDbContext.MarketResearches
                 .Include(mr => mr.VideoAnalysises)
+                .ThenInclude(va => va.Comments)
                 .Include(mr => mr.ChatMessages)
                 .FirstAsync(mr => mr.Id == id);
 
@@ -51,18 +55,6 @@ namespace Server.Features.MarketResearches
             var videoAnalyzations = await applicationDbContext.YouTubeVideoAnalyses
                 .Where(yva => yva.Comments.Count == 0)
                 .Select(w => new VideoWaitingForAnalysisDTO { Id = w.Id, YoutubeId = w.Url }).ToListAsync();
-
-            string GetYouTubeVideoId(string url)
-            {
-                if (string.IsNullOrWhiteSpace(url))
-                    return null;
-
-                // Regular expression to extract YouTube video ID
-                var regex = new Regex(@"(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^""&?\/ ]{11})", RegexOptions.IgnoreCase);
-                var match = regex.Match(url);
-
-                return match.Success ? match.Groups[1].Value : null;
-            }
 
             return Ok(videoAnalyzations.Select(v => new VideoWaitingForAnalysisDTO { Id = v.Id, YoutubeId = GetYouTubeVideoId(v.YoutubeId) }));
         }
@@ -94,12 +86,21 @@ namespace Server.Features.MarketResearches
         {
             var marketResearch = await applicationDbContext.MarketResearches.FirstAsync(mr => mr.Id == marketResearchId);
 
+            var youtubeId = GetYouTubeVideoId(youTubeVideoAnalysisDTO.Url);
+            var (videoName, thumbnail) = await videoAnalyzer.GetYouTubeVideoTitle(youtubeId);
+            var comments = await videoAnalyzer.AnalyzeYouTubeVideo(youtubeId);
+
             marketResearch.VideoAnalysises.Add(new YouTube.YouTubeVideoAnalysis
             {
+                VideoName = videoName,
                 Url = youTubeVideoAnalysisDTO.Url,
+                Thumbnail = thumbnail,
+                Comments = comments
             });
 
             await applicationDbContext.SaveChangesAsync();
+
+            await hubContext.Clients.All.SendAsync(NotificationConstants.UpdateMarketResearch);
         }
 
         [HttpPost("{marketResearchId}/chat")]
@@ -127,6 +128,18 @@ namespace Server.Features.MarketResearches
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        private string GetYouTubeVideoId(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                return null;
+
+            // Regular expression to extract YouTube video ID
+            var regex = new Regex(@"(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^""&?\/ ]{11})", RegexOptions.IgnoreCase);
+            var match = regex.Match(url);
+
+            return match.Success ? match.Groups[1].Value : null;
         }
     }
 }
