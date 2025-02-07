@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Azure.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -12,9 +13,16 @@ namespace Server
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            if (host.Services.GetRequiredService<IWebHostEnvironment>().IsProduction())
+            {
+                await YoutubeDLSharp.Utils.DownloadYtDlp();
+                await YoutubeDLSharp.Utils.DownloadFFmpeg();
+            }
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
