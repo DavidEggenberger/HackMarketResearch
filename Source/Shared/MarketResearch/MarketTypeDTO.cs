@@ -16,7 +16,7 @@ namespace Shared.MarketResearch
 
     public static class MarketTypeDTOExtensions
     {
-        public static string ToString(this MarketTypeDTO marketTypeDTO)
+        public static string GetString(this MarketTypeDTO marketTypeDTO)
         {
             return marketTypeDTO switch
             {

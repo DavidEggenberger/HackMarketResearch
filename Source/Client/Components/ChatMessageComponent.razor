@@ -1,0 +1,29 @@
+﻿@if (ChatMessage.IsSystem)
+{
+    <div class="w-full flex justify-end">
+        <div class="p-1 border border-orange bg-white rounded">
+            <div>
+                @ChatMessage.Text
+            </div>
+            <div class="flex justify-end">
+                <h3 class="text-sm text-semibold mt-0.5 text-orange">Rahel rocket🚀</h3>
+            </div>
+        </div>
+
+    </div>
+}
+else
+{
+    <div class="w-full flex justify-start">
+        <div class="p-1 border border-orange bg-white rounded">
+            @ChatMessage.Text
+        </div>
+
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public ChatMessageDTO ChatMessage { get; set; }
+}

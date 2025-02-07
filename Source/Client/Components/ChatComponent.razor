@@ -1,0 +1,8 @@
+﻿<div class="w-full h-full grid justify-center">
+    <div class="w-[400px]">
+        @foreach (var chatMessage in MarketResearchDTO.ChatMessages)
+        {
+            <ChatMessageComponent ChatMessage="chatMessage"/>
+        }
+    </div>
+</div>

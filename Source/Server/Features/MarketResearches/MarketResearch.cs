@@ -1,6 +1,9 @@
 ﻿using Server.Features.UserIdentity;
+using Server.Features.YouTube;
 using Shared.MarketResearch;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 
 namespace Server.Features.MarketResearches
@@ -11,9 +14,13 @@ namespace Server.Features.MarketResearches
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
 
+        public List<YouTubeVideoAnalysis> VideoAnalysises { get; set; } = new List<YouTubeVideoAnalysis>();
+        public List<ChatMessage> ChatMessages { get; set; } = new List<ChatMessage>();
+
         public string Emoji { get; set; }
         public string Name { get; set; }
         public MarketType MarketType { get; set; }
+        public string ProductDescription { get; set; }
 
         public static MarketResearch FromDTO(MarketResearchDTO marketResearch)
         {
@@ -31,6 +38,7 @@ namespace Server.Features.MarketResearches
                 Id = Id,
                 Emoji = Emoji,
                 Name = Name,
+                ChatMessages = ChatMessages.Select(cm => cm.ToDTO()).ToList()
             };
         }
     }

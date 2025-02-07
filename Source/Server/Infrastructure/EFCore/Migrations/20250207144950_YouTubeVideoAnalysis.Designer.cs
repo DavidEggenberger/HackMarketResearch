@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Infrastructure.EFCore;
 
@@ -11,9 +12,11 @@ using Server.Infrastructure.EFCore;
 namespace Server.Infrastructure.EFCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250207144950_YouTubeVideoAnalysis")]
+    partial class YouTubeVideoAnalysis
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,28 +232,6 @@ namespace Server.Infrastructure.EFCore.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Server.Features.MarketResearches.ChatMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsSystem")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("MarketResearchId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MarketResearchId");
-
-                    b.ToTable("ChatMessage");
-                });
-
             modelBuilder.Entity("Server.Features.MarketResearches.MarketResearch", b =>
                 {
                     b.Property<Guid>("Id")
@@ -320,7 +301,7 @@ namespace Server.Infrastructure.EFCore.Migrations
 
                     b.HasIndex("MarketResearchId");
 
-                    b.ToTable("YouTubeVideoAnalyses");
+                    b.ToTable("YouTubeVideoAnalysis");
                 });
 
             modelBuilder.Entity("Server.Features.UserIdentity.ApplicationUser", b =>
@@ -381,13 +362,6 @@ namespace Server.Infrastructure.EFCore.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Server.Features.MarketResearches.ChatMessage", b =>
-                {
-                    b.HasOne("Server.Features.MarketResearches.MarketResearch", null)
-                        .WithMany("ChatMessages")
-                        .HasForeignKey("MarketResearchId");
-                });
-
             modelBuilder.Entity("Server.Features.MarketResearches.MarketResearch", b =>
                 {
                     b.HasOne("Server.Features.UserIdentity.ApplicationUser", "ApplicationUser")
@@ -413,8 +387,6 @@ namespace Server.Infrastructure.EFCore.Migrations
 
             modelBuilder.Entity("Server.Features.MarketResearches.MarketResearch", b =>
                 {
-                    b.Navigation("ChatMessages");
-
                     b.Navigation("VideoAnalysises");
                 });
 

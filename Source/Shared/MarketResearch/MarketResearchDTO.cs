@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.ChatMessages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,6 @@ namespace Shared.MarketResearch
         public string Emoji { get; set; }
         public string Name { get; set; }
         public MarketTypeDTO MarketType { get; set; }
+        public List<ChatMessageDTO> ChatMessages { get; set; }
     }
 }

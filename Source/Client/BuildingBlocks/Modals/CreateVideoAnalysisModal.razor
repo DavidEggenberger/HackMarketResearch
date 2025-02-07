@@ -1,0 +1,18 @@
+﻿<CreateModal CreationTitle="YouTube video analysieren" 
+            CreationDescription="Analysiere ein YouTube video. Wir sagen dir ob dein Produkt nachgefragt wird."
+             TModel="YouTubeVideoAnalysisDTO"
+             IconPath="/icons/chart.png"
+             ModalExitedCallback="async() => await CloseModalAsync()"
+             ActionButtonClickedCallback="async () => await CreateVideoAnalysisAsync()"
+             Model="videoAnalysisDTO">
+
+    <Template>
+
+        <TextInput 
+            Label="Url"
+            @bind-Value="videoAnalysisDTO.Url"
+            ValidationFor="@(() => videoAnalysisDTO.Url)"/>
+
+    </Template>
+
+</CreateModal>

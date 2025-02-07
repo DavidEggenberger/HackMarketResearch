@@ -1,9 +1,58 @@
 ﻿@page "/MarketResearch/{Id}"
 
-<div class="h-full w-full">
+<div class="h-full w-full grid grid-cols-[230px_1fr] pt-3">
+    <div class="w-full h-full border-r border-orange">
+        <h3 class="font-semibold text-xl">History</h3>
 
+        <AuthorizeView>
+            <NotAuthorized>
+               
+                <div class="mt-6 mr-2">
+                    <h3 class="mb-1 text-sm">Erstelle einen Account um deine Marktanalysen zu speichern.</h3>
+                    <button class="mt-1 border-1 border-orange text-orange bg-white p-1 cursor-pointer rounded border text-md transition hover:text-white hover:bg-orange">
+                        <span class="whitespace-nowrap">Account erstellen</span>
+                    </button>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+
+    </div>
+    <div class="w-full h-full pl-4 pt-1 grid grid-rows-[80px_1fr]">
+        <div class="h-[80px] w-full">
+            <h5 class="text-md">
+                @marketResearch.MarketType.GetString()
+            </h5>
+            <h2 class="text-2xl mt-2 font-semibold text-orange">
+                @marketResearch.Emoji @marketResearch.Name
+            </h2>
+        </div>
+        <div class="h-full w-full grid grid-cols-[1fr_260px]">
+            <div class="w-full h-full">
+                <ChatComponent MarketResearchDTO="marketResearch"/>
+            </div>
+            <div class="w-full h-full">
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Analysierter Content</h3>
+                </div>
+                <div class="h-48">
+                    <div class="flex items-center">
+                        <h3 class="mb-1 text-md font-semibold">YouTube Videos</h3>
+                        <div class="h-6 w-6 ml-2 mb-1 cursor-pointer" @onclick="async() => await OpenCreateVideoAnalysisModalAsync()">
+                            <img src="/icons/add.png"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2 h-48">
+                    <div class="flex items-center">
+                        <h3 class="mb-1 text-md font-semibold">Reddit Posts</h3>
+                        <div class="h-6 w-6 ml-2 mb-1 cursor-pointer" @onclick="async() => await OpenCreateVideoAnalysisModalAsync()">
+                            <img src="/icons/add.png" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-
 
 

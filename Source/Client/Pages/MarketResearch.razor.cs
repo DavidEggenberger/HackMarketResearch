@@ -1,4 +1,7 @@
-﻿using Client.BuildingBlocks.Http;
+﻿using Blazored.Modal.Services;
+using Blazored.Modal;
+using Client.BuildingBlocks.Http;
+using Client.BuildingBlocks.Modals;
 using Microsoft.AspNetCore.Components;
 using Shared;
 using Shared.MarketResearch;
@@ -13,11 +16,26 @@ namespace Client.Pages
         [Parameter]
         public string Id { get; set; }
 
+        [Inject]
+        public IModalService modalService { get; set; }
+
         private MarketResearchDTO marketResearch;
+        private IModalReference modalReference;
 
         protected override async Task OnInitializedAsync()
         {
             marketResearch = await HttpClientService.GetFromAPIAsync<MarketResearchDTO>(EndpointConstants.MarketResearchEndpoint + $"/{Id}");
+        }
+
+        private async Task OpenCreateVideoAnalysisModalAsync()
+        {
+            var parameters = new ModalParameters
+            {
+                { nameof(CreateVideoAnalysisModal.ModalExitedCallback), new EventCallback(this, async () => { modalReference.Close(); })},
+                { nameof(CreateVideoAnalysisModal.MarketResearchId), marketResearch.Id },
+            };
+
+            modalReference = modalService.Show<CreateVideoAnalysisModal>(string.Empty, parameters, DefaultModalOptions.DefaultModal);
         }
     }
 }
