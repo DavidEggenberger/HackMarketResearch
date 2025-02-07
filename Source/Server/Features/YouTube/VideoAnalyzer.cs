@@ -7,6 +7,7 @@ using System.Text.Json;
 using Server.Features.YouTube.APIObjects;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
+using System;
 
 namespace Server.Features.YouTube
 {
@@ -71,6 +72,32 @@ namespace Server.Features.YouTube
                 return (response.Items[0].Snippet.Title, response.Items[0].Snippet.Thumbnails.High.Url);
             }
             return ("Video not found", "");
+        }
+
+        public async Task SearchYouTubeVideos(string query)
+        {
+            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            {
+                ApiKey = GoogleAPIKey,
+                ApplicationName = "YouTubeSearchApp"
+            });
+
+            var searchRequest = youtubeService.Search.List("snippet");
+            searchRequest.Q = query;
+            searchRequest.MaxResults = 5;
+            searchRequest.Type = "video";  // Ensure only videos are returned
+
+            var searchResponse = await searchRequest.ExecuteAsync();
+
+            Console.WriteLine("YouTube Search Results:");
+            foreach (var item in searchResponse.Items)
+            {
+                string videoTitle = item.Snippet.Title;
+                string videoId = item.Id.VideoId;
+                string videoUrl = $"https://www.youtube.com/watch?v={videoId}";
+
+                Console.WriteLine($"{videoTitle}: {videoUrl}");
+            }
         }
     }
 }

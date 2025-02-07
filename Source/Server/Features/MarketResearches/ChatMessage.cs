@@ -1,6 +1,7 @@
 ﻿using NuGet.Protocol.Core.Types;
 using Shared.ChatMessages;
 using System;
+using System.Collections.Generic;
 
 namespace Server.Features.MarketResearches
 {
@@ -9,6 +10,7 @@ namespace Server.Features.MarketResearches
         public Guid Id { get; set; }
         public string Text { get; set; }
         public bool IsSystem { get; set; }
+        public List<VideoProposal> VideoProposal { get; set; }
 
         public ChatMessageDTO ToDTO()
         {

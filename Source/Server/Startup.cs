@@ -12,9 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.SemanticKernel;
 using Server.Features.YouTube;
 using Server.Infrastructure.EFCore;
 using Server.Infrastructure.Hubs;
+using Server.Infrastructure.SemanticKernel;
 
 namespace Server
 {
@@ -44,6 +46,9 @@ namespace Server
             {
                 options.UseSqlServer(Configuration["EFCoreConfiguration:SQLServerConnectionStringProd"]);
             });
+
+            services.AddInMemoryVectorStore();
+            services.AddScoped<SemanticKernelService>();
 
             services.AddScoped<VideoAnalyzer>();
         }

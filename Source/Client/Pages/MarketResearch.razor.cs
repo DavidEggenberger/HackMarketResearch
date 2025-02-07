@@ -26,6 +26,8 @@ namespace Client.Pages
         private MarketResearchDTO marketResearch;
         private IModalReference modalReference;
 
+
+
         protected override async Task OnInitializedAsync()
         {
             marketResearch = await HttpClientService.GetFromAPIAsync<MarketResearchDTO>(EndpointConstants.MarketResearchEndpoint + $"/{Id}");

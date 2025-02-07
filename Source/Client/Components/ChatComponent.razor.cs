@@ -20,6 +20,7 @@ namespace Client.Components
         public MarketResearchDTO MarketResearchDTO { get; set; }
 
         private string currentMessage = string.Empty;
+        private bool IsWaiting = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -28,6 +29,8 @@ namespace Client.Components
 
         private async Task SendChatMessageAsync(string message)
         {
+            IsWaiting = true;
+
             var chatMessage = new ChatMessageDTO { IsSystem = false, Text = message };
 
             await HttpClientService.PostToAPIAsync<ChatMessageDTO>(EndpointConstants.MarketResearchEndpoint + $"/{MarketResearchDTO.Id}/chat", chatMessage);
@@ -35,6 +38,8 @@ namespace Client.Components
             MarketResearchDTO.ChatMessages.Add(chatMessage);
 
             currentMessage = string.Empty;
+
+            IsWaiting = false;
         }
 
         private async Task HandleKeyDown(KeyboardEventArgs args)

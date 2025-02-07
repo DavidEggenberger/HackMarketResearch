@@ -5,35 +5,29 @@
             @foreach (var chatMessage in MarketResearchDTO.ChatMessages)
             {
                 <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage"/>
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage" />
-                <ChatMessageComponent ChatMessage="chatMessage"/>
             }
         }
-        <div class="mt-4 flex w-full flex-col justify-start">
-            <div @onkeydown="async(c) => await HandleKeyDown(c)">
-                <textarea @bind="currentMessage" @bind:event="oninput" style="min-height: 50px; overflow-y: hidden; resize: none;"
-                          class="text-black bg-white p-1.5 text-md block w-[340px] w-full whitespace-normal rounded border outline-none focus:ring-primary-500 focus:border-primary-500"
-                          type="text" autocomplete="off"
-                          autocorrect="off"
-                          autocapitalize="off"
-                          spellcheck="false" />
-                <div class="text-orange flex w-[340px] justify-end text-[12px]">
-                    Zum senden enter drücken
+        @if (IsWaiting)
+        {
+            <div class="mt-2 flex w-full justify-center">
+                <div class="lds-facebook"><div></div><div></div><div></div></div>
+            </div>
+        }
+        else
+        {
+            <div class="mt-4 flex w-full flex-col justify-start">
+                <div @onkeydown="async(c) => await HandleKeyDown(c)">
+                    <textarea @bind="currentMessage" @bind:event="oninput" style="min-height: 50px; overflow-y: hidden; resize: none;"
+                              class="text-black bg-white p-1.5 text-md block w-[340px] w-full whitespace-normal rounded border outline-none focus:ring-primary-500 focus:border-primary-500"
+                              type="text" autocomplete="off"
+                              autocorrect="off"
+                              autocapitalize="off"
+                              spellcheck="false" />
+                    <div class="text-orange flex w-[340px] justify-end text-[12px]">
+                        Zum senden enter drücken
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
 </div>

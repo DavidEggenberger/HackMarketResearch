@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Server.Features.YouTube;
 using Server.Infrastructure.EFCore;
 using Server.Infrastructure.Hubs;
+using Server.Infrastructure.SemanticKernel;
 using Shared;
 using Shared.ChatMessages;
 using Shared.MarketResearch;
@@ -23,12 +24,14 @@ namespace Server.Features.MarketResearches
         private readonly IHubContext<NotificationHub> hubContext;
         private readonly ApplicationDbContext applicationDbContext;
         private readonly VideoAnalyzer videoAnalyzer;
+        private readonly SemanticKernelService semanticKernelService;
 
-        public MarketResearchesController(ApplicationDbContext applicationDbContext, VideoAnalyzer videoAnalyzer, IHubContext<NotificationHub> hubContext)
+        public MarketResearchesController(ApplicationDbContext applicationDbContext, VideoAnalyzer videoAnalyzer, IHubContext<NotificationHub> hubContext, SemanticKernelService semanticKernelService)
         {
             this.applicationDbContext = applicationDbContext;
             this.hubContext = hubContext;
             this.videoAnalyzer = videoAnalyzer;
+            this.semanticKernelService = semanticKernelService;
         }
 
         [HttpGet]
@@ -109,6 +112,12 @@ namespace Server.Features.MarketResearches
             var marketResearch = await applicationDbContext.MarketResearches.FirstAsync(mr => mr.Id == marketResearchId);
 
             marketResearch.ChatMessages.Add(ChatMessage.FromDTO(chatMessageDTO));
+
+            var message = await semanticKernelService.Chat(marketResearchId, chatMessageDTO.Text);
+
+            marketResearch.ChatMessages.Add(new ChatMessage { IsSystem = true, Text = message });
+
+            //await videoAnalyzer.SearchYouTubeVideos(chatMessageDTO.Text);
 
             await hubContext.Clients.All.SendAsync(NotificationConstants.UpdateChat);
 
