@@ -7,31 +7,55 @@ using YoutubeDLSharp;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using Server.Features.YouTube.APIObjects;
 
 namespace Server.Features.YouTube
 {
     public class VideoAnalyzer
     {
-        private readonly ILogger _logger;
+        private string GoogleAPIKey;
+        private HttpClient httpClient;
 
-        public VideoAnalyzer(ILoggerFactory loggerFactory)
+        public VideoAnalyzer(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
-            _logger = loggerFactory.CreateLogger<VideoAnalyzer>();
+            GoogleAPIKey = configuration["GoogleKey"];
+            httpClient = httpClientFactory.CreateClient();
         }
 
         public async Task<List<VideoComment>> AnalyzeYouTubeVideo(string url)
         {
-            var ytdl = new YoutubeDL();
-            var videoResult = await ytdl.RunVideoDataFetch(url, fetchComments: true);
-            if (videoResult.Success is false)
+            var videoComments = new List<VideoComment>();
+            var nextPageToken = string.Empty;
+
+            do
             {
-                _logger.LogCritical(string.Join(", ", videoResult.ErrorOutput));
-                return null;
-            }
+                string apiUrl = $"https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId={url}&key={GoogleAPIKey}&maxResults=100&pageToken={nextPageToken}";
 
-            var comments = videoResult.Data.Comments.Select(c => new VideoComment { Text = c.Text, LikeCount = c.LikeCount }).ToList();
-            return comments;
+                HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
+                if (!response.IsSuccessStatusCode)
+                {
+                    break;
+                }
 
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                var root = JsonSerializer.Deserialize<Root>(jsonResponse);
+
+                if (root?.items != null)
+                {
+                    videoComments.AddRange(root.items
+                        .Select(i => i.snippet.topLevelComment.snippet)
+                        .Select(t => new VideoComment() { LikeCount = t.likeCount, Text = t.textDisplay })
+                        .ToList());
+                }
+
+                nextPageToken = root?.nextPageToken ?? null;
+
+            } while (!string.IsNullOrEmpty(nextPageToken));
+
+            return videoComments.OrderByDescending(c => c.LikeCount).ToList();
         }
     }
 }

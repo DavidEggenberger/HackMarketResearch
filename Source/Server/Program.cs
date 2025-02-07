@@ -16,11 +16,6 @@ namespace Server
         public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            if (host.Services.GetRequiredService<IWebHostEnvironment>().IsProduction())
-            {
-                await YoutubeDLSharp.Utils.DownloadYtDlp();
-                await YoutubeDLSharp.Utils.DownloadFFmpeg();
-            }
 
             host.Run();
         }

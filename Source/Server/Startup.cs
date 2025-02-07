@@ -32,6 +32,7 @@ namespace Server
             services.AddSignalR();
             services.AddRazorPages();
             services.AddControllers();
+            services.AddHttpClient();
 
             services.AddSwaggerGen(c =>
             {

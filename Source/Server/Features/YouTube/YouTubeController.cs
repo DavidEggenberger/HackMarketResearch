@@ -23,7 +23,7 @@ namespace Server.Features.YouTube
         public async Task<ActionResult<List<VideoComment>>> GetComments(string youtubeVideoPath)
         {
             var urlDecoded = HttpUtility.UrlDecode(youtubeVideoPath);
-            var comments = await videoAnalyzer.AnalyzeYouTubeVideo("https://www.youtube.com/watch?v=" + urlDecoded);
+            var comments = await videoAnalyzer.AnalyzeYouTubeVideo(urlDecoded);
             return Ok(comments);
         }
     }
