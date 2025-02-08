@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel.Memory;
 using Server.Features.MarketResearches;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -50,10 +51,12 @@ namespace Server.Infrastructure.SemanticKernel
                 {
                     var deserialized = JsonSerializer.Deserialize<ResultProduktBeschreibung>(messageContent.ToString());
                     marketReseach.ProductDescription = deserialized.Produkt;
+
+                    return new ChatMessage { IsSystem = true, Text = messageContent.ToString() };
                 }
                 catch (Exception ex)
                 {
-
+                    return new ChatMessage { IsSystem = true, Text = messageContent.ToString() };
                 }
             }
             else
@@ -62,7 +65,17 @@ namespace Server.Infrastructure.SemanticKernel
                     Du bist ein hilfsbereiter chatbot. Das Ziel ist es den Benutzern bei der Zielmarksuche für ihr Produkt zu helfen. Das ist ihr Produkt {marketReseach.ProductDescription};
                     Bitte suche Nischenmärkte für das Produkt und halte dich dabei bite kurz und knapp. Bitte gebe das resultat höchstens drei im folgenden JSON zurück:
                     {{
-                        ""Name"" : ""Kurze Beschreibung der Produktidee""
+                      ""Vorschläge"": [
+                        {{
+                          ""Markt"": ""Fitness Gadgets""
+                        }},
+                        {{
+                          ""Markt"": ""Nachhaltige Mode""
+                        }},
+                        {{
+                          ""Markt"": ""Smart Home Geräte""
+                        }}
+                      ]
                     }}";
 
                 chatHistory = new ChatHistory(chatHistoryString);
@@ -73,7 +86,8 @@ namespace Server.Infrastructure.SemanticKernel
 
                 try
                 {
-                    var deserialized = JsonSerializer.Deserialize<ResultMarketProposal>(messageContent.ToString());
+                    var deserialized = JsonSerializer.Deserialize<List<ResultMarketProposal>>(messageContent.ToString());
+                    
                 }
                 catch (Exception ex)
                 {
@@ -81,7 +95,7 @@ namespace Server.Infrastructure.SemanticKernel
                 }
             }
 
-            return new ChatMessage { IsSystem = true, Text = messageContent.ToString() };
+            return null;
         }
     }
     public class ResultProduktBeschreibung
@@ -89,8 +103,13 @@ namespace Server.Infrastructure.SemanticKernel
         public string Produkt { get; set; }
     }
 
+    public class NischenMärkte
+    {
+        public List<ResultMarketProposal> Vorschläge { get; set; }
+    }
+
     public class ResultMarketProposal
     {
-        public string Name { get; set; }
+        public string Markt { get; set; }
     }
 }

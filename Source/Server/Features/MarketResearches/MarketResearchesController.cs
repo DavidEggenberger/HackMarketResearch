@@ -87,14 +87,14 @@ namespace Server.Features.MarketResearches
             var marketResearch = await applicationDbContext.MarketResearches.FirstAsync(mr => mr.Id == marketResearchId);
 
             var youtubeId = GetYouTubeVideoId(youTubeVideoAnalysisDTO.Url);
-            //var (videoName, thumbnail) = await videoAnalyzer.GetYouTubeVideoTitle(youtubeId);
+            var (videoName, thumbnail) = await videoAnalyzer.GetYouTubeVideoTitle(youtubeId);
             var comments = await videoAnalyzer.AnalyzeYouTubeVideo(youtubeId);
 
             marketResearch.VideoAnalysises.Add(new YouTube.YouTubeVideoAnalysis
             {
-                //VideoName = videoName,
+                VideoName = videoName,
                 Url = youTubeVideoAnalysisDTO.Url,
-                //Thumbnail = thumbnail,
+                Thumbnail = thumbnail,
                 Comments = comments
             });
 
@@ -124,6 +124,9 @@ namespace Server.Features.MarketResearches
         {
             var marketResearch = await applicationDbContext.MarketResearches
                 .Include(mr => mr.ChatMessages)
+                .ThenInclude(mr => mr.MarketProposals)
+                .Include(mr => mr.ChatMessages)
+                .ThenInclude(mr => mr.VideoProposals)
                 .FirstAsync(mr => mr.Id == marketResearchId);
 
             return marketResearch.ToDTO().ChatMessages;

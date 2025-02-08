@@ -57,20 +57,21 @@ namespace Server.Features.YouTube
 
         public async Task<(string name, string thumbnail)> GetYouTubeVideoTitle(string videoId)
         {
-            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
-            {
-                ApiKey = GoogleAPIKey,
-                ApplicationName = "YouTubeAPI-Example"
-            });
+            string url = $"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={videoId}&key={GoogleAPIKey}";
+            var response = await httpClient.GetStringAsync(url);
 
-            var request = youtubeService.Videos.List("snippet");
-            request.Id = videoId;
+            using JsonDocument json = JsonDocument.Parse(response);
+            var items = json.RootElement.GetProperty("items");
 
-            var response = await request.ExecuteAsync();
-            if (response.Items.Count > 0)
+            if (items.GetArrayLength() > 0)
             {
-                return (response.Items[0].Snippet.Title, response.Items[0].Snippet.Thumbnails.High.Url);
+                var snippet = items[0].GetProperty("snippet");
+                string title = snippet.GetProperty("title").GetString();
+                string thumbnail = snippet.GetProperty("thumbnails").GetProperty("high").GetProperty("url").GetString();
+
+                return (title, thumbnail);
             }
+
             return ("Video not found", "");
         }
 
