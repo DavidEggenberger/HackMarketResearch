@@ -16,7 +16,7 @@ namespace Server.Features.MarketResearches
 
         public List<YouTubeVideoAnalysis> VideoAnalysises { get; set; } = new List<YouTubeVideoAnalysis>();
         public List<ChatMessage> ChatMessages { get; set; } = new List<ChatMessage>();
-        public List<PotentialMarket> PotentialMarkets { get; set; }
+        public List<MarketProposal> PotentialMarkets { get; set; }
 
         public string Emoji { get; set; }
         public string Name { get; set; }

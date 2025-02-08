@@ -79,7 +79,7 @@ namespace Server.Features.YouTube
             var youtubeService = new YouTubeService(new BaseClientService.Initializer()
             {
                 ApiKey = GoogleAPIKey,
-                ApplicationName = "YouTubeSearchApp"
+                ApplicationName = "YouTubeAPI-Example"
             });
 
             var searchRequest = youtubeService.Search.List("snippet");

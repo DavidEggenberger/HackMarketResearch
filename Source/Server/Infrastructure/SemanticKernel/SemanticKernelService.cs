@@ -24,7 +24,7 @@ namespace Server.Infrastructure.SemanticKernel
             kernel = kernelBuilder.Build();
         }
 
-        public async Task<string> Chat(MarketResearch marketReseach, string userMessage)
+        public async Task<ChatMessage> Chat(MarketResearch marketReseach, string userMessage)
         {
             var chat = kernel.GetRequiredService<IChatCompletionService>();
 
@@ -81,7 +81,7 @@ namespace Server.Infrastructure.SemanticKernel
                 }
             }
 
-            return messageContent.ToString();
+            return new ChatMessage { IsSystem = true, Text = messageContent.ToString() };
         }
     }
     public class ResultProduktBeschreibung

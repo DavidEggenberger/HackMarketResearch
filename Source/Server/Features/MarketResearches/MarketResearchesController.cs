@@ -87,14 +87,14 @@ namespace Server.Features.MarketResearches
             var marketResearch = await applicationDbContext.MarketResearches.FirstAsync(mr => mr.Id == marketResearchId);
 
             var youtubeId = GetYouTubeVideoId(youTubeVideoAnalysisDTO.Url);
-            var (videoName, thumbnail) = await videoAnalyzer.GetYouTubeVideoTitle(youtubeId);
+            //var (videoName, thumbnail) = await videoAnalyzer.GetYouTubeVideoTitle(youtubeId);
             var comments = await videoAnalyzer.AnalyzeYouTubeVideo(youtubeId);
 
             marketResearch.VideoAnalysises.Add(new YouTube.YouTubeVideoAnalysis
             {
-                VideoName = videoName,
+                //VideoName = videoName,
                 Url = youTubeVideoAnalysisDTO.Url,
-                Thumbnail = thumbnail,
+                //Thumbnail = thumbnail,
                 Comments = comments
             });
 
@@ -110,11 +110,9 @@ namespace Server.Features.MarketResearches
 
             marketResearch.ChatMessages.Add(ChatMessage.FromDTO(chatMessageDTO));
 
-            var message = await semanticKernelService.Chat(marketResearch, chatMessageDTO.Text);
+            var chatMessage = await semanticKernelService.Chat(marketResearch, chatMessageDTO.Text);
 
-            marketResearch.ChatMessages.Add(new ChatMessage { IsSystem = true, Text = message });
-
-            //await videoAnalyzer.SearchYouTubeVideos(chatMessageDTO.Text);
+            marketResearch.ChatMessages.Add(chatMessage);
 
             await hubContext.Clients.All.SendAsync(NotificationConstants.UpdateChat);
 
@@ -132,11 +130,13 @@ namespace Server.Features.MarketResearches
         }
 
         [HttpPut("{videoId}")]
-        public async Task UpdateVideoAnalyzation(Guid videoId)
+        public async Task UpdateVideoAnalyzation(Guid videoId, [FromBody] UpdateVideoAnalysisDTO updateVideo)
         {
             var videoAnalysis = await applicationDbContext.YouTubeVideoAnalyses.FirstAsync(ytva => ytva.Id == videoId);
 
+            videoAnalysis.AnalyzationResult = updateVideo.Result;
 
+            await applicationDbContext.SaveChangesAsync();
         }
 
         [HttpDelete("{id}")]

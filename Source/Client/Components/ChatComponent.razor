@@ -18,7 +18,7 @@
             <div class="mt-4 flex w-full flex-col justify-start">
                 <div @onkeydown="async(c) => await HandleKeyDown(c)">
                     <textarea @bind="currentMessage" @bind:event="oninput" style="min-height: 50px; overflow-y: hidden; resize: none;"
-                              class="text-black bg-white p-1.5 text-md block w-[340px] w-full whitespace-normal rounded border outline-none focus:ring-primary-500 focus:border-primary-500"
+                              class="text-black bg-white p-1.5 text-sm block w-[340px] w-full whitespace-normal rounded border outline-none focus:ring-primary-500 focus:border-primary-500"
                               type="text" autocomplete="off"
                               autocorrect="off"
                               autocapitalize="off"

@@ -10,5 +10,7 @@ namespace Shared.ChatMessages
     {
         public bool IsSystem { get; set; }
         public string Text { get; set; }
+        public List<VideoProposalDTO> VideoProposals { get; set; }
+        public List<MarketProposalDTO> MarketProposals { get; set; }
     }
 }
