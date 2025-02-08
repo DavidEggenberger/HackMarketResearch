@@ -6,7 +6,7 @@
 
         <AuthorizeView>
             <NotAuthorized>
-               
+
                 <div class="mt-6 mr-2">
                     <h3 class="mb-1 text-sm">Erstelle einen Account um deine Marktanalysen zu speichern.</h3>
                     <button @onclick="async() => await OpenSignInModalAsync()" class="mt-1 border-1 border-orange text-orange bg-white p-1 text-md cursor-pointer rounded border transition hover:text-white hover:bg-orange">
@@ -18,13 +18,21 @@
 
     </div>
     <div class="pl-4 pt-1 grid-rows-[80px_1fr] grid h-full w-full overflow-y-auto">
-        <div class="h-[80px] w-full">
-            <h5 class="text-lg">
-                @marketResearch?.MarketType.GetString()
-            </h5>
-            <h2 class="mt-2 ml-2 text-orange text-3xl font-semibold">
-                @marketResearch.Emoji @marketResearch?.Name
-            </h2>
+        <div class="h-[80px] w-full flex flex-row justify-between">
+            <div>
+                <h5 class="text-lg">
+                    @marketResearch?.MarketType.GetString()
+                </h5>
+                <h2 class="mt-2 ml-2 text-orange text-3xl font-semibold">
+                    @marketResearch.Emoji @marketResearch?.Name
+                </h2>
+            </div>
+            @if(informFinishedAnalysis)
+            {
+                <div class="">
+                    <h4 class="text-sm text-orange">Analyse abgeschlossen</h4>
+                </div>
+            }
         </div>
         <div class="grid-cols-[1fr_300px] grid h-full w-full overflow-y-auto">
             <div class="pr-2 h-full w-full overflow-y-auto">

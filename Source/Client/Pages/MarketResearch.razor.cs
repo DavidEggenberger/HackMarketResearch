@@ -28,7 +28,7 @@ namespace Client.Pages
         private IModalReference modalReference;
 
         private List<YouTubeVideoAnalysisDTO> sortedVideos;
-
+        private bool informFinishedAnalysis;
         protected override async Task OnInitializedAsync()
         {
             marketResearch = await HttpClientService.GetFromAPIAsync<MarketResearchDTO>(EndpointConstants.MarketResearchEndpoint + $"/{Id}");

@@ -21,7 +21,7 @@ namespace Client.BuildingBlocks.Modals
 
         [Parameter]
         public MarketResearchDTO MarketResearch { get; set; }
-
+        private bool requestOngoing;
         public async Task CloseModalAsync()
         {
             if (ModalExitedCallback.HasDelegate)
@@ -44,7 +44,11 @@ namespace Client.BuildingBlocks.Modals
 
         private async Task AnalyzeVideo()
         {
+            requestOngoing = true;
+
             await HttpClientService.PostToAPIAsync(EndpointConstants.MarketResearchEndpoint + $"/{MarketResearch.Id}/video", new YouTubeVideoAnalysisDTO { Url = VideoProposal.Url });
+
+            requestOngoing = false;
 
             await CloseModalAsync();
         }
