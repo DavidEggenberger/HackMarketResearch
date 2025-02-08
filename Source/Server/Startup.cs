@@ -44,7 +44,7 @@ namespace Server
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration["EFCoreConfiguration:SQLServerConnectionStringProd"]);
+                options.UseSqlServer(Configuration["SqlDatabase"]);
             });
 
             services.AddInMemoryVectorStore();
