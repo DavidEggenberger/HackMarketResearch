@@ -56,7 +56,7 @@ namespace Server.Features.MarketResearches
                 .YouTubeVideoAnalyses
                 .Include(mr => mr.MarketResearch)
                 .Include(c => c.Comments)
-                .Where(x => string.IsNullOrEmpty(x.AnalyzationResult) && !string.IsNullOrEmpty(x.MarketResearch.ProductDescription))
+                .Where(x => string.IsNullOrEmpty(x.AnalyzationResult) && x.Comments.Any() && !string.IsNullOrEmpty(x.MarketResearch.ProductDescription))
                 .Select(x => new VideoWaitingForAnalysisDTO { ProductDescription = x.MarketResearch.ProductDescription, Id = x.Id, VideoComments = x.Comments.Select(c => c.ToDTO()).ToList() })
                 .ToListAsync();
 
