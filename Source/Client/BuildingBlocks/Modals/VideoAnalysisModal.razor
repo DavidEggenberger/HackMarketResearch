@@ -1,4 +1,6 @@
-﻿<div class="ring-orange flex w-[380px] flex-col rounded-lg ring-1">
+﻿@using Markdig
+
+<div class="ring-orange flex w-[380px] flex-col rounded-lg ring-1">
     <div class="gap-x-3 border-gray-300 bg-gray-50 p-4 flex flex-row items-center rounded-t-lg border-b">
         <div class="mt-1.5 grid h-full self-start">
             <div class="h-9 w-9 border-gray-300 bg-white grid place-content-center rounded-lg border">
@@ -44,7 +46,8 @@
                 }
                 else
                 {
-                    @VideoAnalysis.AnalyzationResult
+                    string ht = @Markdown.ToHtml(VideoAnalysis.AnalyzationResult);
+                    @((MarkupString)ht)
                 }
             </div>
         </div>
