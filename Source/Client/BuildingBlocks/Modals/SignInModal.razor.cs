@@ -1,19 +1,14 @@
-﻿using Client.BuildingBlocks.Http;
-using Microsoft.AspNetCore.Components;
-using Shared.YouTube;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace Client.BuildingBlocks.Modals
 {
-    public partial class VideoAnalysisModal : ComponentBase
+    public partial class SignInModal : ComponentBase
     {
         [Parameter]
         public EventCallback ModalExitedCallback { get; set; }
 
         [Parameter]
-        public YouTubeVideoAnalysisDTO VideoAnalysis { get; set; }
-
-        [Inject]
-        public HttpClientService HttpClientService { get; set; }
+        public NavigationManager NavigationManager { get; set; }
 
         public async Task CloseModalAsync()
         {

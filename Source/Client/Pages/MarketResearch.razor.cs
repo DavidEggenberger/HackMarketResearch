@@ -53,6 +53,16 @@ namespace Client.Pages
             modalReference = modalService.Show<CreateVideoAnalysisModal>(string.Empty, parameters, DefaultModalOptions.DefaultModal);
         }
 
+        private async Task OpenSignInModalAsync()
+        {
+            var parameters = new ModalParameters
+            {
+                { nameof(SignInModal.ModalExitedCallback), new EventCallback(this, async () => { modalReference.Close(); })},
+            };
+
+            modalReference = modalService.Show<SignInModal>(string.Empty, parameters, DefaultModalOptions.DefaultModal);
+        }
+
         private void FilterItems(ChangeEventArgs e)
         {
             var sorter = e.Value?.ToString() ?? "";

@@ -34,12 +34,6 @@ namespace Server.Features.MarketResearches
             this.semanticKernelService = semanticKernelService;
         }
 
-        [HttpGet]
-        public IEnumerable<string> GetMarketResearches()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult> GetMarketResearch(Guid id)
         {
@@ -55,11 +49,14 @@ namespace Server.Features.MarketResearches
         [HttpGet("VideosToBeAnalyzed")]
         public async Task<ActionResult> GetVideosToBeAnalyzed()
         {
-            var videoAnalyzations = await applicationDbContext.YouTubeVideoAnalyses
-                .Where(yva => yva.Comments.Count == 0)
-                .Select(w => new VideoWaitingForAnalysisDTO { Id = w.Id, YoutubeId = w.Url }).ToListAsync();
+            var videoAnalyzations = await applicationDbContext
+                .YouTubeVideoAnalyses
+                .Include(mr => mr.MarketResearch)
+                .Include(c => c.Comments)
+                .Select(x => new VideoWaitingForAnalysisDTO { ProductDescription = x.MarketResearch.ProductDescription, Id = x.Id, VideoComments = x.Comments.Select(c => c.ToDTO()).ToList() })
+                .ToListAsync();
 
-            return Ok(videoAnalyzations.Select(v => new VideoWaitingForAnalysisDTO { Id = v.Id, YoutubeId = GetYouTubeVideoId(v.YoutubeId) }));
+            return Ok(videoAnalyzations);
         }
 
         [HttpPost]
@@ -74,7 +71,7 @@ namespace Server.Features.MarketResearches
                 new ChatMessage
                 {
                     IsSystem = true,
-                    Text = "Willkommen bei der Marktanalyse!"
+                    Text = "Willkommen! Unser Ziel ist es Nischenmärkte für dein Produkt/Idee zu finden. Was hast du für eine ProduktIdee?"
                 }
             };
 
@@ -113,7 +110,7 @@ namespace Server.Features.MarketResearches
 
             marketResearch.ChatMessages.Add(ChatMessage.FromDTO(chatMessageDTO));
 
-            var message = await semanticKernelService.Chat(marketResearchId, chatMessageDTO.Text);
+            var message = await semanticKernelService.Chat(marketResearch, chatMessageDTO.Text);
 
             marketResearch.ChatMessages.Add(new ChatMessage { IsSystem = true, Text = message });
 

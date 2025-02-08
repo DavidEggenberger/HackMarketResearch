@@ -1,10 +1,13 @@
-﻿<div class="p-1 bg-white border-grey-300 mt-1 rounded border">
+﻿@using Client.BuildingBlocks.Modals
+@inject IModalService modalService
+
+<div class="p-1 bg-white border-grey-300 mt-1 rounded border">
     <div>
         <h3 class="text-xs font-semibold">@VideoDTO.VideoName</h3>
     </div>
     <div class="mt-1 flex flex-row justify-between">
         <div class="gap-x-2 flex flex-row">
-            <a class="text-orange cursor-pointer text-xs" href="@VideoDTO.Url" target="_blank">Analyse</a>
+            <h6 @onclick="async () => await OpenVideoAnalysisModalAsync()" class="text-orange cursor-pointer text-xs" href="@VideoDTO.Url" target="_blank">Analyse</h6>
             <a class="text-orange cursor-pointer text-xs" href="@VideoDTO.Url" target="_blank">Video</a>
         </div>
 
@@ -17,4 +20,17 @@
 @code{
     [Parameter]
     public YouTubeVideoAnalysisDTO VideoDTO { get; set; }
+
+    private IModalReference modalReference;
+
+    private async Task OpenVideoAnalysisModalAsync()
+    {
+        var parameters = new ModalParameters
+            {
+                { nameof(VideoAnalysisModal.ModalExitedCallback), new EventCallback(this, async () => { modalReference.Close(); })},
+                { nameof(VideoAnalysisModal.VideoAnalysis), VideoDTO },
+            };
+
+        modalReference = modalService.Show<VideoAnalysisModal>(string.Empty, parameters, DefaultModalOptions.DefaultModal);
+    }
 }

@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel.Memory;
 using Server.Features.MarketResearches;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Server.Infrastructure.SemanticKernel
@@ -17,21 +18,79 @@ namespace Server.Infrastructure.SemanticKernel
         {
             var kernelBuilder = Kernel
                 .CreateBuilder()
-                .AddOpenAIChatCompletion("gpt-4o-mini", configuration["LearningContentsConfiguration:OpenAIApiKey"]);
+                .AddOpenAIChatCompletion("gpt-4o-mini", configuration["LearningContentsConfiguration:OpenAIApiKey"])
+                .AddInMemoryVectorStore();
 
             kernel = kernelBuilder.Build();
         }
 
-        public async Task<string> Chat(Guid marketResearchId, string userMessage)
+        public async Task<string> Chat(MarketResearch marketReseach, string userMessage)
         {
             var chat = kernel.GetRequiredService<IChatCompletionService>();
 
-            var chatHistory = new ChatHistory("Du bist ein hilfsbereiter chatbot. Das Ziel ist es dem Benutzenden bei der Marktanalyse zu helfen.");
-            chatHistory.AddUserMessage(userMessage);
+            ChatHistory chatHistory = null;
+            ChatMessageContent messageContent = null;
+            if (string.IsNullOrEmpty(marketReseach.ProductDescription))
+            {
+                var chatHistoryString = @"
+                    Du bist ein hilfsbereiter chatbot. Das Ziel ist es den Benutzern bei der Marktanalyse zu helfen.
+                    Als erstes sollst du abklären was für ein Art von Produkt oder Idee die Nutzenden vermarkten wollen. Bitte halte dich kurz und knapp. Die Zielgruppe ist dabei noch nicht wichtig. Falls du dir sehr sicher bist das Produkt genau zu verstehen bitte antworte im folgenden JSON Format:
+                    {
+                        ""Produkt"" : ""Kurze Beschreibung der Produktidee""
+                    }
+                    Falls du nicht sicher bist was für ein produkt sich der user vorstellt darfst du ihn gerne genauere Fragen stellen";
 
-            var messageContent = await chat.GetChatMessageContentAsync(chatHistory, kernel: kernel);
+                chatHistory = new ChatHistory(chatHistoryString);
+
+                chatHistory.AddUserMessage(userMessage);
+
+                messageContent = await chat.GetChatMessageContentAsync(chatHistory, kernel: kernel);
+
+                try
+                {
+                    var deserialized = JsonSerializer.Deserialize<ResultProduktBeschreibung>(messageContent.ToString());
+                    marketReseach.ProductDescription = deserialized.Produkt;
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+            else
+            {
+                var chatHistoryString = @$"
+                    Du bist ein hilfsbereiter chatbot. Das Ziel ist es den Benutzern bei der Zielmarksuche für ihr Produkt zu helfen. Das ist ihr Produkt {marketReseach.ProductDescription};
+                    Bitte suche Nischenmärkte für das Produkt und halte dich dabei bite kurz und knapp. Bitte gebe das resultat höchstens drei im folgenden JSON zurück:
+                    {{
+                        ""Name"" : ""Kurze Beschreibung der Produktidee""
+                    }}";
+
+                chatHistory = new ChatHistory(chatHistoryString);
+
+                chatHistory.AddUserMessage(userMessage);
+
+                messageContent = await chat.GetChatMessageContentAsync(chatHistory, kernel: kernel);
+
+                try
+                {
+                    var deserialized = JsonSerializer.Deserialize<ResultMarketProposal>(messageContent.ToString());
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
 
             return messageContent.ToString();
         }
+    }
+    public class ResultProduktBeschreibung
+    {
+        public string Produkt { get; set; }
+    }
+
+    public class ResultMarketProposal
+    {
+        public string Name { get; set; }
     }
 }

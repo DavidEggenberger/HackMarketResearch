@@ -10,5 +10,7 @@ namespace Shared.YouTube
     {
         public Guid Id { get; set; }
         public string YoutubeId { get; set; }
+        public string ProductDescription { get; set; }
+        public List<VideoCommentDTO> VideoComments { get; set; }
     }
 }

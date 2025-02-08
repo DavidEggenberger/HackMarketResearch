@@ -9,7 +9,7 @@
                
                 <div class="mt-6 mr-2">
                     <h3 class="mb-1 text-sm">Erstelle einen Account um deine Marktanalysen zu speichern.</h3>
-                    <button class="mt-1 border-1 border-orange text-orange bg-white p-1 text-md cursor-pointer rounded border transition hover:text-white hover:bg-orange">
+                    <button @onclick="async() => await OpenSignInModalAsync()" class="mt-1 border-1 border-orange text-orange bg-white p-1 text-md cursor-pointer rounded border transition hover:text-white hover:bg-orange">
                         <span class="whitespace-nowrap">Account erstellen</span>
                     </button>
                 </div>
