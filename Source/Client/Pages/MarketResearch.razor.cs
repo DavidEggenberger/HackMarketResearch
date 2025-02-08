@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Shared;
 using Shared.MarketResearch;
 using Microsoft.AspNetCore.SignalR.Client;
+using Shared.YouTube;
 
 namespace Client.Pages
 {
@@ -26,7 +27,7 @@ namespace Client.Pages
         private MarketResearchDTO marketResearch;
         private IModalReference modalReference;
 
-
+        private List<YouTubeVideoAnalysisDTO> sortedVideos;
 
         protected override async Task OnInitializedAsync()
         {
@@ -37,6 +38,8 @@ namespace Client.Pages
                 marketResearch = await HttpClientService.GetFromAPIAsync<MarketResearchDTO>(EndpointConstants.MarketResearchEndpoint + $"/{Id}");
                 StateHasChanged();     
             });
+
+            sortedVideos = marketResearch.Videos;
         }
 
         private async Task OpenCreateVideoAnalysisModalAsync()
@@ -48,6 +51,22 @@ namespace Client.Pages
             };
 
             modalReference = modalService.Show<CreateVideoAnalysisModal>(string.Empty, parameters, DefaultModalOptions.DefaultModal);
+        }
+
+        private void FilterItems(ChangeEventArgs e)
+        {
+            var sorter = e.Value?.ToString() ?? "";
+            if (string.IsNullOrEmpty(sorter))
+            {
+                sortedVideos = marketResearch.Videos;
+            }
+            else
+            {
+                if (sorter == "Neuste")
+                {
+                    Console.WriteLine(90);
+                }
+            }
         }
     }
 }

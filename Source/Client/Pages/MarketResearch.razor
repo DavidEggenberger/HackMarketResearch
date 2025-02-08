@@ -34,7 +34,7 @@
                 <div>
                     <h3 class="mb-2 text-lg font-semibold">Analysierter Content</h3>
                 </div>
-                <div class="h-1/2">
+                <div class="h-3/4">
                     <div class="flex flex-row items-center justify-between">
                         <div class="flex flex-row items-center">
                             <h3 class="mb-1 text-md font-semibold">YouTube Videos</h3>
@@ -42,10 +42,10 @@
                                 <img src="/icons/add.png" />
                             </div>
                         </div>
-                        <select class="mr-2 mb-1 text-gray-900 border-gray-300 bg-gray-50 p-0.5 block rounded border text-xs outline-none focus:ring-orange focus:border-orange">
-                            <option>Neueste</option>
-                            <option>Marktpotenzial</option>
-                            <option>Anz. Kommentare</option>
+                        <select @onchange="FilterItems" class="mr-2 mb-1 text-gray-900 border-gray-300 bg-gray-50 p-0.5 block rounded border text-xs outline-none focus:ring-orange focus:border-orange">
+                            <option value="Neuste">Neueste</option>
+                            <option value="Potential">Marktpotenzial</option>
+                            <option value="Comments">Anz. Kommentare</option>
                         </select>
                     </div>
                     <div class="pr-2 h-full overflow-y-auto">
@@ -58,14 +58,14 @@
                         }
                     </div>
                 </div>
-                <div class="mt-2 h-48">
+@*                 <div class="mt-2 h-48">
                     <div class="flex items-center">
                         <h3 class="mb-1 text-md font-semibold">Reddit Posts</h3>
                         <div class="h-6 w-6 ml-2 mb-1 cursor-pointer" @onclick="async() => await OpenCreateVideoAnalysisModalAsync()">
                             <img src="/icons/add.png" />
                         </div>
                     </div>
-                </div>
+                </div> *@
             </div>
         </div>
     </div>

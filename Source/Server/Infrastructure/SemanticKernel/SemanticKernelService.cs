@@ -26,7 +26,7 @@ namespace Server.Infrastructure.SemanticKernel
         {
             var chat = kernel.GetRequiredService<IChatCompletionService>();
 
-            var chatHistory = new ChatHistory("Du bist ein hilfsbereiter chatbot");
+            var chatHistory = new ChatHistory("Du bist ein hilfsbereiter chatbot. Das Ziel ist es dem Benutzenden bei der Marktanalyse zu helfen.");
             chatHistory.AddUserMessage(userMessage);
 
             var messageContent = await chat.GetChatMessageContentAsync(chatHistory, kernel: kernel);

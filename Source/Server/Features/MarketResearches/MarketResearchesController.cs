@@ -134,6 +134,14 @@ namespace Server.Features.MarketResearches
             return marketResearch.ToDTO().ChatMessages;
         }
 
+        [HttpPut("{videoId}")]
+        public async Task UpdateVideoAnalyzation(Guid videoId)
+        {
+            var videoAnalysis = await applicationDbContext.YouTubeVideoAnalyses.FirstAsync(ytva => ytva.Id == videoId);
+
+
+        }
+
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
