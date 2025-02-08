@@ -1,4 +1,7 @@
-﻿@if (ChatMessage.IsSystem)
+﻿@using Client.BuildingBlocks.Http
+@using Client.BuildingBlocks.Modals
+@using Shared
+@if (ChatMessage.IsSystem)
 {
     <div class="mt-2 flex w-full justify-end text-xs">
         <div class="p-1 border-orange bg-white rounded border">
@@ -10,7 +13,7 @@
                 <div class="flex flex-row gap-x-2 pt-2">
                     @foreach (var market in ChatMessage.MarketProposals)
                     {
-                        <div class="rounded hover:border-orange cursor-pointer p-0.5 border border-gray-300 text-xs">
+                        <div @onclick="async() => await SelectMarketAsync(market)" class="rounded hover:border-orange cursor-pointer p-0.5 border border-gray-300 text-xs">
                             <h5>@market.Name</h5>
                         </div>
                     }
@@ -19,10 +22,10 @@
             @if (ChatMessage.VideoProposals.Any())
             {
                 <div class="flex flex-row gap-x-2 pt-2">
-                    @foreach (var market in ChatMessage.MarketProposals)
+                    @foreach (var video in ChatMessage.VideoProposals.Take(4))
                     {
-                        <div class="rounded hover:border-orange cursor-pointer p-0.5 border border-gray-300 text-xs">
-                            <h5>@market.Name</h5>
+                        <div @onclick="async() => await OpenCreateVideoAnalysisModalAsync(video)" class="rounded hover:border-orange cursor-pointer p-0.5 border border-gray-300 text-xs">
+                            <h5>@(video.Title.Length > 50 ? $"{video.Title.Substring(0, 50)}..." : video.Title)</h5>
                         </div>
                     }
                 </div>
@@ -46,5 +49,33 @@ else
 
 @code {
     [Parameter]
+    public MarketResearchDTO MarketResearch { get; set; }
+
+    [Parameter]
     public ChatMessageDTO ChatMessage { get; set; }
+
+    [Inject]
+    public HttpClientService HttpClientService { get; set; }
+    
+    [Inject]
+    public IModalService modalService { get; set; }
+
+    private IModalReference modalReference;
+
+    private async Task SelectMarketAsync(MarketProposalDTO market)
+    {
+        await HttpClientService.PostToAPIAsync(EndpointConstants.MarketResearchEndpoint + $"/{MarketResearch.Id}/YouTubeSearch", market);
+    }
+
+    private async Task OpenCreateVideoAnalysisModalAsync(VideoProposalDTO videoProposal)
+    {
+        var parameters = new ModalParameters
+        {
+            { nameof(VideoOverviewModal.ModalExitedCallback), new EventCallback(this, async () => { modalReference.Close(); })},
+            { nameof(VideoOverviewModal.VideoProposal), videoProposal },
+            { nameof(VideoOverviewModal.MarketResearch), MarketResearch },
+        };
+
+        modalReference = modalService.Show<VideoOverviewModal>(string.Empty, parameters, DefaultModalOptions.DefaultModal);
+    }
 }

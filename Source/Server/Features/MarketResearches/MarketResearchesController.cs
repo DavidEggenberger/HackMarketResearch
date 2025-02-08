@@ -41,6 +41,9 @@ namespace Server.Features.MarketResearches
                 .Include(mr => mr.VideoAnalysises)
                 .ThenInclude(va => va.Comments)
                 .Include(mr => mr.ChatMessages)
+                .ThenInclude(va => va.VideoProposals)
+                .Include(mr => mr.ChatMessages)
+                .ThenInclude(c => c.MarketProposals)
                 .FirstAsync(mr => mr.Id == id);
 
             return Ok(marketResearch.ToDTO());
@@ -65,8 +68,18 @@ namespace Server.Features.MarketResearches
         {
             var marketResearch = await applicationDbContext.MarketResearches.FirstAsync(mr => mr.Id == marketResearchId);
 
+            var foundVideos = await videoAnalyzer.SearchYouTubeVideos(marketProposalDTO.Name);
 
+            marketResearch.ChatMessages.Add(new ChatMessage
+            {
+                IsSystem = true,
+                Text = "Hier habe ich Video vorschläge für dich",
+                VideoProposals = foundVideos.Select(fv => new VideoProposal { Url = fv.Url, Title = fv.VideoName }).ToList()
+            });
 
+            await applicationDbContext.SaveChangesAsync();
+
+            await hubContext.Clients.All.SendAsync(NotificationConstants.UpdateMarketResearch);
         }
 
         [HttpPost]

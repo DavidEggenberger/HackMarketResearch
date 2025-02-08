@@ -35,7 +35,17 @@
         </div>
         <div class="h-36 mt-3 overflow-y-auto">
             <div class="h-48">
-                @VideoAnalysis.AnalyzationResult
+                @if (string.IsNullOrEmpty(VideoAnalysis.AnalyzationResult))
+                {
+                    <h3 class="mb-3 text-orange text-xl">Processing Analyse</h3>
+                    <div class="mt-2 flex w-full justify-center">
+                        <div class="lds-facebook"><div></div><div></div><div></div></div>
+                    </div>
+                }
+                else
+                {
+                    @VideoAnalysis.AnalyzationResult
+                }
             </div>
         </div>
         <div class="h-36 mt-3 overflow-y-auto">

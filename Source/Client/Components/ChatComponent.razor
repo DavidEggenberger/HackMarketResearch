@@ -4,7 +4,7 @@
         {
             @foreach (var chatMessage in MarketResearchDTO.ChatMessages)
             {
-                <ChatMessageComponent ChatMessage="chatMessage" />
+                <ChatMessageComponent MarketResearch="MarketResearchDTO" ChatMessage="chatMessage" />
             }
         }
         @if (IsWaiting)

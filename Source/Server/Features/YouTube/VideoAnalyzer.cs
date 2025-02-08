@@ -75,30 +75,97 @@ namespace Server.Features.YouTube
             return ("Video not found", "");
         }
 
-        public async Task SearchYouTubeVideos(string query)
+        public async Task<List<YouTubeVideoAnalysis>> SearchYouTubeVideos(string query)
         {
-            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            string url = $"https://www.googleapis.com/youtube/v3/search?part=snippet&q={Uri.EscapeDataString(query)}&maxResults=5&type=video&key={GoogleAPIKey}";
+
+            var response = await httpClient.GetStringAsync(url);
+
+            var root = JsonSerializer.Deserialize<Root1>(response);
+
+            var videos = new List<YouTubeVideoAnalysis>();
+            foreach (var item in root.items.Select(i => (i.id.videoId, i.snippet)))
             {
-                ApiKey = GoogleAPIKey,
-                ApplicationName = "YouTubeAPI-Example"
-            });
+                var t = new YouTubeVideoAnalysis()
+                {
+                    Url = $"https://www.youtube.com/watch?v={item.videoId}",
+                    VideoName = item.snippet.title
+                };
 
-            var searchRequest = youtubeService.Search.List("snippet");
-            searchRequest.Q = query;
-            searchRequest.MaxResults = 5;
-            searchRequest.Type = "video";  // Ensure only videos are returned
-
-            var searchResponse = await searchRequest.ExecuteAsync();
-
-            Console.WriteLine("YouTube Search Results:");
-            foreach (var item in searchResponse.Items)
-            {
-                string videoTitle = item.Snippet.Title;
-                string videoId = item.Id.VideoId;
-                string videoUrl = $"https://www.youtube.com/watch?v={videoId}";
-
-                Console.WriteLine($"{videoTitle}: {videoUrl}");
+                videos.Add(t);
             }
+
+            return videos;
         }
+    }
+
+    public class Default
+    {
+        public string url { get; set; }
+        public int width { get; set; }
+        public int height { get; set; }
+    }
+
+    public class High
+    {
+        public string url { get; set; }
+        public int width { get; set; }
+        public int height { get; set; }
+    }
+
+    public class Id
+    {
+        public string kind { get; set; }
+        public string videoId { get; set; }
+    }
+
+    public class Item
+    {
+        public string kind { get; set; }
+        public string etag { get; set; }
+        public Id id { get; set; }
+        public Snippet snippet { get; set; }
+    }
+
+    public class Medium
+    {
+        public string url { get; set; }
+        public int width { get; set; }
+        public int height { get; set; }
+    }
+
+    public class PageInfo
+    {
+        public int totalResults { get; set; }
+        public int resultsPerPage { get; set; }
+    }
+
+    public class Root1
+    {
+        public string kind { get; set; }
+        public string etag { get; set; }
+        public string nextPageToken { get; set; }
+        public string regionCode { get; set; }
+        public PageInfo pageInfo { get; set; }
+        public List<Item> items { get; set; }
+    }
+
+    public class Snippet
+    {
+        public DateTime publishedAt { get; set; }
+        public string channelId { get; set; }
+        public string title { get; set; }
+        public string description { get; set; }
+        public Thumbnails thumbnails { get; set; }
+        public string channelTitle { get; set; }
+        public string liveBroadcastContent { get; set; }
+        public DateTime publishTime { get; set; }
+    }
+
+    public class Thumbnails
+    {
+        public Default @default { get; set; }
+        public Medium medium { get; set; }
+        public High high { get; set; }
     }
 }
