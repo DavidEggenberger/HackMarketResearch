@@ -10,5 +10,6 @@ namespace Shared
     {
         public const string UpdateChat = nameof(UpdateChat);
         public const string UpdateMarketResearch = nameof(UpdateMarketResearch);
+        public const string RefreshVideos = nameof(RefreshVideos);
     }
 }

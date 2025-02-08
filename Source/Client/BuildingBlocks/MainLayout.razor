@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using Client.BuildingBlocks.Modals
+@inherits LayoutComponentBase
 
 <div class="h-screen w-screen">
     <nav class="pb-0 ml-auto mr-auto flex h-[65px] w-full max-w-[1400px] flex-row content-start items-end justify-between p-[20px]">
@@ -16,7 +17,7 @@
             </a>
             <AuthorizeView>
                 <NotAuthorized>
-                    <button target="_blank" href="/swagger/index.html">
+                    <button @onclick="async() => await OpenSignInModalAsync()" target="_blank" href="/swagger/index.html">
                         <span class="border-1 border-orange text-orange bg-white p-1 cursor-pointer rounded border text-xl transition hover:text-white hover:bg-orange">Sign in</span>
                     </button>
                 </NotAuthorized>
@@ -36,3 +37,20 @@
         @Body
     </main>
 </div>
+
+@code{
+    [Inject]
+    public IModalService modalService { get; set; }
+
+    private IModalReference modalReference;
+
+    private async Task OpenSignInModalAsync()
+    {
+        var parameters = new ModalParameters
+            {
+                { nameof(SignInModal.ModalExitedCallback), new EventCallback(this, async () => { modalReference.Close(); })},
+            };
+
+        modalReference = modalService.Show<SignInModal>(string.Empty, parameters, DefaultModalOptions.DefaultModal);
+    }
+}

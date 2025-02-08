@@ -123,7 +123,7 @@ namespace Server.Features.MarketResearches
 
             await applicationDbContext.SaveChangesAsync();
 
-            await hubContext.Clients.All.SendAsync(NotificationConstants.UpdateMarketResearch);
+            await hubContext.Clients.All.SendAsync(NotificationConstants.RefreshVideos);
         }
 
         [HttpPost("{marketResearchId}/chat")]
@@ -155,6 +155,17 @@ namespace Server.Features.MarketResearches
             return marketResearch.ToDTO().ChatMessages;
         }
 
+        [HttpGet("{marketResearchId}/videos")]
+        public async Task<List<YouTubeVideoAnalysisDTO>> LoadAllVideosOfMarketResearchAsync([FromRoute] Guid marketResearchId)
+        {
+            var marketResearch = await applicationDbContext.MarketResearches
+                .Include(mr => mr.VideoAnalysises)
+                .ThenInclude(va => va.Comments)
+                .FirstAsync(mr => mr.Id == marketResearchId);
+
+            return marketResearch.VideoAnalysises.Select(v => v.ToDTO()).ToList();
+        }
+
         [HttpPut("{videoId}")]
         public async Task UpdateVideoAnalyzation(Guid videoId, [FromBody] UpdateVideoAnalysisDTO updateVideo)
         {
@@ -163,6 +174,8 @@ namespace Server.Features.MarketResearches
             videoAnalysis.AnalyzationResult = updateVideo.Result;
 
             await applicationDbContext.SaveChangesAsync();
+
+            await hubContext.Clients.All.SendAsync(NotificationConstants.RefreshVideos);
         }
 
         [HttpDelete("{id}")]

@@ -39,6 +39,13 @@ namespace Client.Pages
                 StateHasChanged();     
             });
 
+
+            HubConnection.On(NotificationConstants.RefreshVideos, async () =>
+            {
+                marketResearch.Videos = await HttpClientService.GetFromAPIAsync<List<YouTubeVideoAnalysisDTO>>(EndpointConstants.MarketResearchEndpoint + $"/{Id}/videos");
+                StateHasChanged();
+            });
+
             sortedVideos = marketResearch.Videos;
         }
 
