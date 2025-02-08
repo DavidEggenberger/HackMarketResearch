@@ -25,10 +25,11 @@ namespace Server.Infrastructure.SemanticKernel
             kernel = kernelBuilder.Build();
         }
 
-        public async Task<ChatMessage> Chat(MarketResearch marketReseach, string userMessage)
+        public async Task<List<ChatMessage>> Chat(MarketResearch marketReseach, string userMessage)
         {
             var chat = kernel.GetRequiredService<IChatCompletionService>();
 
+            var messages = new List<ChatMessage>();
             ChatHistory chatHistory = null;
             ChatMessageContent messageContent = null;
             if (string.IsNullOrEmpty(marketReseach.ProductDescription))
@@ -52,47 +53,61 @@ namespace Server.Infrastructure.SemanticKernel
                     var deserialized = JsonSerializer.Deserialize<ResultProduktBeschreibung>(messageContent.ToString());
                     marketReseach.ProductDescription = deserialized.Produkt;
 
-                    return new ChatMessage { IsSystem = true, Text = messageContent.ToString() };
+                    var marketMessages = await GetMarketProposals(marketReseach);
+                    messages.AddRange(marketMessages);
                 }
                 catch (Exception ex)
                 {
-                    return new ChatMessage { IsSystem = true, Text = messageContent.ToString() };
+                    messages.Add(new ChatMessage { IsSystem = true, Text = messageContent.ToString() });
                 }
             }
             else
             {
-                var chatHistoryString = @$"
-                    Du bist ein hilfsbereiter chatbot. Das Ziel ist es den Benutzern bei der Zielmarksuche für ihr Produkt zu helfen. Das ist ihr Produkt {marketReseach.ProductDescription};
-                    Bitte suche Nischenmärkte für das Produkt und halte dich dabei bite kurz und knapp. Bitte gebe das resultat höchstens drei im folgenden JSON zurück:
+                
+            }
+
+            return messages;
+        }
+
+        private async Task<ChatMessage> GetMarketProposals(MarketResearch marketResearch)
+        {
+            var chat = kernel.GetRequiredService<IChatCompletionService>();
+
+            ChatHistory chatHistory = null;
+            ChatMessageContent messageContent = null;
+
+            var chatHistoryString = @$"
+                    Du bist ein hilfsbereiter chatbot. Das Ziel ist es den Benutzern bei der Zielmarksuche für ihr Produkt zu helfen. Das ist ihr Produkt {marketResearch.ProductDescription};
+                    Bitte suche Nischenmärkte für das Produkt und halte dich dabei bite kurz und knapp. Bitte gebe das resultat höchstens drei im folgenden JSON Format zurück
                     {{
                       ""Vorschläge"": [
                         {{
-                          ""Markt"": ""Fitness Gadgets""
+                          ""Markt"": ""Beispiel 1""
                         }},
                         {{
-                          ""Markt"": ""Nachhaltige Mode""
+                          ""Markt"": ""Beispiel 2""
                         }},
                         {{
-                          ""Markt"": ""Smart Home Geräte""
+                          ""Markt"": ""Beispiel 3""
                         }}
                       ]
                     }}";
 
-                chatHistory = new ChatHistory(chatHistoryString);
+            chatHistory = new ChatHistory(chatHistoryString);
 
-                chatHistory.AddUserMessage(userMessage);
+            messageContent = await chat.GetChatMessageContentAsync(chatHistory, kernel: kernel);
 
-                messageContent = await chat.GetChatMessageContentAsync(chatHistory, kernel: kernel);
+            var response = messageContent.ToString();
 
-                try
-                {
-                    var deserialized = JsonSerializer.Deserialize<List<ResultMarketProposal>>(messageContent.ToString());
-                    
-                }
-                catch (Exception ex)
-                {
+            try
+            {
+                var deserialized = JsonSerializer.Deserialize<NischenMärkte>(response);
 
-                }
+                return new ChatMessage { IsSystem = true, Text = "Hier habe ich Marktvorschläge für dich. Wähle einen aus um verwandte videos zu erhalten.", MarketProposals = deserialized.Vorschläge.Select(v => new MarketProposal { Name = v.Markt }).ToList() };
+            }
+            catch (Exception ex)
+            {
+
             }
 
             return null;

@@ -53,10 +53,20 @@ namespace Server.Features.MarketResearches
                 .YouTubeVideoAnalyses
                 .Include(mr => mr.MarketResearch)
                 .Include(c => c.Comments)
+                .Where(x => string.IsNullOrEmpty(x.AnalyzationResult) && !string.IsNullOrEmpty(x.MarketResearch.ProductDescription))
                 .Select(x => new VideoWaitingForAnalysisDTO { ProductDescription = x.MarketResearch.ProductDescription, Id = x.Id, VideoComments = x.Comments.Select(c => c.ToDTO()).ToList() })
                 .ToListAsync();
 
             return Ok(videoAnalyzations);
+        }
+
+        [HttpPost("{marketResearchId}/YouTubeSearch")]
+        public async Task GenerateYouTubeSearch([FromRoute] Guid marketResearchId, [FromBody] MarketProposalDTO marketProposalDTO)
+        {
+            var marketResearch = await applicationDbContext.MarketResearches.FirstAsync(mr => mr.Id == marketResearchId);
+
+
+
         }
 
         [HttpPost]
@@ -110,13 +120,13 @@ namespace Server.Features.MarketResearches
 
             marketResearch.ChatMessages.Add(ChatMessage.FromDTO(chatMessageDTO));
 
-            var chatMessage = await semanticKernelService.Chat(marketResearch, chatMessageDTO.Text);
+            var chatMessages = await semanticKernelService.Chat(marketResearch, chatMessageDTO.Text);
 
-            marketResearch.ChatMessages.Add(chatMessage);
-
-            await hubContext.Clients.All.SendAsync(NotificationConstants.UpdateChat);
+            marketResearch.ChatMessages.AddRange(chatMessages);
 
             await applicationDbContext.SaveChangesAsync();
+
+            await hubContext.Clients.All.SendAsync(NotificationConstants.UpdateChat);
         }
 
         [HttpGet("{marketResearchId}/chat")]

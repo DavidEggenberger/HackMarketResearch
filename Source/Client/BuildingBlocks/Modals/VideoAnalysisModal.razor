@@ -35,7 +35,22 @@
         </div>
         <div class="h-36 mt-3 overflow-y-auto">
             <div class="h-48">
-
+                @VideoAnalysis.AnalyzationResult
+            </div>
+        </div>
+        <div class="h-36 mt-3 overflow-y-auto">
+            <div class="h-48">
+                @foreach (var comment in VideoAnalysis.VideoComments.OrderByDescending(v => v.LikeCount))
+                {
+                    <div class="mt-1 rounded border border-gray-300 text-sm">
+                        <h5>
+                            <span class="font-semibold">Likes: @comment.LikeCount</span>
+                        </h5>
+                        <h5>
+                            <span>@comment.Text</span>
+                        </h5>
+                    </div>
+                }
             </div>
         </div>
     </div>

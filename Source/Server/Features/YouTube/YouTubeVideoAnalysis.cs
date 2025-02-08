@@ -24,6 +24,7 @@ namespace Server.Features.YouTube
                 VideoName = VideoName,
                 Url = Url,
                 Thumbnail = Thumbnail,
+                AnalyzationResult = AnalyzationResult,
                 VideoComments = Comments.Select(c => new VideoCommentDTO { LikeCount = c.LikeCount, Text = c.Text }).ToList()
             };
         }
